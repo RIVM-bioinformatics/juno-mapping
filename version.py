@@ -1,0 +1,6 @@
+__package_name__ = "juno_template"
+__authors__ = "author"
+__email__ = "author@rivm.nl"
+__license__ = "AGPLv3"
+__version__ = "1.0"
+__description__ = "Template juno pipeline. If you see this message please change it to something appropriate"

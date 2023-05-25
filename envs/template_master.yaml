@@ -1,0 +1,16 @@
+name: juno_template
+channels:
+  - conda-forge
+  - bioconda
+  - anaconda
+  - biocore
+  - defaults
+dependencies:
+  - git=2.40.*
+  - mamba=1.3.*
+  - pandas=1.5.*
+  - snakemake=7.18.*
+  - pip=23.*
+  - python=3.11.*
+  - pip:
+    - "--editable=git+https://github.com/RIVM-bioinformatics/juno-library.git@v2.0.0#egg=juno_library"
