@@ -17,7 +17,14 @@ localrules:
     all,
 
 
-include: "workflow/rules/rule.smk"
+include: "workflow/rules/fastqc_raw_data.smk"
+include: "workflow/rules/clean_fastq.smk"
+include: "workflow/rules/fastqc_clean_data.smk"
+include: "workflow/rules/identify_species.smk"
+include: "workflow/rules/map_clean_reads.smk"
+include: "workflow/rules/qc_mapping.smk"
+include: "workflow/rules/variant_calling.smk"
+include: "workflow/rules/variant_qc.smk"
 
 
 rule all:
