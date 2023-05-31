@@ -41,7 +41,7 @@ rule select_snps:
     shell:
         """
 gatk SelectVariants \
--R {input.reference} \
+-R {input.ref} \
 -V {input.vcf} \
 --select-type-to-include SNP \
 --exclude-filtered \
