@@ -20,8 +20,28 @@ rule multiqc:
             OUT + "/identify_species/reads/{sample}/{sample}_bracken_species.kreport2",
             sample=SAMPLES,
         ),
+        # expand(
+        #     OUT + "/qc_mapping/samtools_stats/{sample}.txt",
+        #     sample=SAMPLES,
+        # ),
         expand(
-            OUT + "/qc_mapping/samtools_stats/{sample}.txt",
+            OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
+            sample=SAMPLES,
+        ),
+        expand(
+            OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
+            sample=SAMPLES,
+        ),
+        expand(
+            OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
+            sample=SAMPLES,
+        ),
+        expand(
+            OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
+            sample=SAMPLES,
+        ),
+        expand(
+            OUT + "/qc_variant_calling/bcftools_stats/{sample}.txt",
             sample=SAMPLES,
         ),
     output:

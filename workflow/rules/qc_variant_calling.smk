@@ -2,7 +2,7 @@ rule get_filter_status:
     input:
         vcf = OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
     output:
-        tsv = OUT + "/variant_qc/get_filter_status/{sample}.tsv"
+        tsv = OUT + "/qc_variant_calling/get_filter_status/{sample}.tsv"
     message: "Writing filter status of variants to table for {wildcards.sample}"
     conda:
         "../envs/gatk_picard.yaml"
@@ -30,9 +30,9 @@ gatk VariantsToTable -V {input.vcf} \
 
 rule combine_filter_status:
     input:
-        expand(OUT + "/variant_qc/get_filter_status/{sample}.tsv", sample = SAMPLES)
+        expand(OUT + "/qc_variant_calling/get_filter_status/{sample}.tsv", sample = SAMPLES)
     output:
-        OUT + "/variant_qc/report_filter_status.tsv"
+        OUT + "/qc_variant_calling/report_filter_status.tsv"
     message: "Combining variant QC reports"
     log:
         OUT + "/log/combine_filter_status.log"
@@ -43,4 +43,29 @@ rule combine_filter_status:
     shell:
         """
 python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
+        """
+
+rule bcftools_stats:
+    input:
+        ref = OUT + "/reference/reference.fasta",
+        vcf = OUT + "/variants/{sample}.vcf",
+    output:
+        txt = OUT + "/qc_variant_calling/bcftools_stats/{sample}.txt",
+    container:
+        "docker://staphb/bcftools:1.16"
+    conda:
+        "../envs/bcftools.yaml"
+    log:
+        OUT + "/log/bcftools_stats/{sample}.log"
+    threads:
+        config["threads"]["filter_variants"]
+    resources:
+        mem_gb = config["mem_gb"]["filter_variants"]
+    shell:
+        """
+bcftools stats \
+--fasta-ref {input.ref} \
+{input.vcf} \
+1>{output.txt} \
+2>{log}
         """

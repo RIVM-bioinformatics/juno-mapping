@@ -93,69 +93,75 @@ O={output.txt} \
 H={output.pdf} 2>&1>{log}
         """
 
-# rule get_filter_status:
+# rule samtools_stats:
 #     input:
-#         vcf = OUT + "/variants/marked/{sample}.vcf",
+#         bam = OUT + "/mapped_reads/duprem/{sample}.bam",
 #     output:
-#         tsv = OUT + "/qc_mapping/get_filter_status/{sample}.tsv"
-#     message: "Writing filter status of variants to table for {wildcards.sample}"
+#         stats = OUT + "/qc_mapping/samtools_stats/{sample}.txt"
+#     container:
+#         "docker://staphb/samtools:1.17"
 #     conda:
 #         "../envs/gatk_picard.yaml"
-#     container:
-#         "docker://broadinstitute/gatk:4.3.0.0"
 #     log:
-#         OUT + "/log/get_filter_status/{sample}.log"
+#         OUT + "/log/samtools_stats/{sample}.log"
 #     threads:
-#         config["threads"]["filter_variants"]
+#         config["threads"]["samtools"]
 #     resources:
-#         mem_gb = config["mem_gb"]["filter_variants"]
+#         mem_gb = config["mem_gb"]["samtools"]
 #     shell:
 #         """
-# gatk VariantsToTable -V {input.vcf} \
-# -F CHROM \
-# -F POS \
-# -F TYPE \
-# -F REF \
-# -F ALT \
-# -F DP \
-# -F FILTER \
-# --show-filtered \
-# -O {output.tsv} 2>&1>{log}
+# samtools stats {input} > {output} 2>{log}
 #         """
 
-# rule combine_filter_status:
-#     input:
-#         expand(OUT + "/qc_mapping/get_filter_status/{sample}.tsv", sample = SAMPLES)
-#     output:
-#         OUT + "/qc_mapping/report_filter_status.tsv"
-#     message: "Combining variant QC reports"
-#     log:
-#         OUT + "/log/combine_filter_status.log"
-#     threads:
-#         config["threads"]["other"]
-#     resources:
-#         mem_gb = config["mem_gb"]["other"]
-#     shell:
-#         """
-# python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
-#         """
+rule CollectAlignmentSummaryMetrics:
+    input:
+        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
+        ref = OUT + "/reference/reference.fasta",
+    output:
+        txt = OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
+    container:
+        "docker://broadinstitute/picard:2.27.5"
+    shell:
+        """
+java -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
+        """
 
-rule samtools_stats:
+rule CollectGcBiasMetrics:
+    input:
+        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
+        ref = OUT + "/reference/reference.fasta",
+    output:
+        txt = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
+        pdf = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.pdf",
+        summary = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.summary.txt",
+    container:
+        "docker://broadinstitute/picard:2.27.5"
+    shell:
+        """
+java -jar /usr/picard/picard.jar CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
+        """
+
+rule CollectQualityYieldMetrics:
     input:
         bam = OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
-        stats = OUT + "/qc_mapping/samtools_stats/{sample}.txt"
+        txt = OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
     container:
-        "docker://staphb/samtools:1.17"
-    conda:
-        "../envs/gatk_picard.yaml"
-    log:
-        OUT + "/log/samtools_stats/{sample}.log"
-    threads:
-        config["threads"]["samtools"]
-    resources:
-        mem_gb = config["mem_gb"]["samtools"]
+        "docker://broadinstitute/picard:2.27.5"
     shell:
         """
-samtools stats {input} > {output} 2>{log}
+java -jar /usr/picard/picard.jar CollectQualityYieldMetrics -I {input.bam} -O {output}
+        """
+
+rule CollectWgsMetrics:
+    input:
+        bam = OUT + "/mapped_reads/sorted/{sample}.bam",
+        ref = OUT + "/reference/reference.fasta",
+    output:
+        txt = OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
+    container:
+        "docker://broadinstitute/picard:2.27.5"
+    shell:
+        """
+java -jar /usr/picard/picard.jar CollectWgsMetrics -I {input.bam} -R {input.ref} -O {output}
         """

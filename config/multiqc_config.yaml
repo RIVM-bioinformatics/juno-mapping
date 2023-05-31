@@ -18,3 +18,13 @@ max_table_rows: 750             # Swap tables for a beeswarm plot above this
 extra_fn_clean_trim:
   - "_bracken_species.kreport2"
   - "_fastp.json"
+
+picard_config:
+  general_stats_target_coverage:
+    - 10
+    - 30
+    - 50
+    - 100
+
+bcftools:
+  collapse_complementary_changes: true
