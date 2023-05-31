@@ -41,7 +41,7 @@ rule gatk_index_ref:
     conda:
         "../envs/gatk_picard.yaml"
     container:
-        "docker://broadinstitute/gatk:4.4.0.0"
+        "docker://broadinstitute/gatk:4.3.0.0"
     log:
         OUT + "/log/gatk_index_ref.log"
     threads:

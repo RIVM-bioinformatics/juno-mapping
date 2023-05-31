@@ -4,6 +4,8 @@ rule filter_snps:
         vcf = OUT + "/variants_raw/including_minority_variants/{sample}.vcf",
     output:
         vcf = OUT + "/variants/{sample}.vcf",
+    container:
+        "docker://staphb/bcftools:1.16"
     conda:
         "../envs/bcftools.yaml"
     params:
@@ -30,6 +32,8 @@ rule select_snps:
         vcf = OUT + "/variants/{sample}.vcf",
     output:
         vcf = OUT + "/variants_snps_only/{sample}.snps.vcf",
+    container:
+        "docker://broadinstitute/gatk:4.3.0.0"
     conda:
         "../envs/gatk_picard.yaml"
     log:

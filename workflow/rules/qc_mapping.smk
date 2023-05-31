@@ -102,7 +102,7 @@ rule get_filter_status:
     conda:
         "../envs/gatk_picard.yaml"
     container:
-        "docker://broadinstitute/gatk:4.4.0.0"
+        "docker://broadinstitute/gatk:4.3.0.0"
     log:
         OUT + "/logs/get_filter_status/{sample}.log"
     threads:
@@ -145,6 +145,8 @@ rule samtools_stats:
         bam = OUT + "bwa_out/{sample}.bam",
     output:
         stats = OUT + "qc_mapping/samtools_stats/{sample}.txt"
+    container:
+        "docker://staphb/samtools:1.17"
     conda:
         "../envs/gatk_picard.yaml"
     log:

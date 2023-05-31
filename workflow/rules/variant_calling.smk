@@ -11,6 +11,8 @@ rule Mutect2:
     params:
         dangling_bases = 1,
         annotations = "--annotation StrandBiasBySample --annotation AlleleFraction",
+    container:
+        "docker://broadinstitute/gatk:4.3.0.0"
     conda:
         "../envs/gatk_picard.yaml"
     threads: 4
@@ -38,6 +40,8 @@ rule FilterMutectCalls:
         ref = OUT + "/reference/reference.fasta",
     output:
         vcf = OUT + "/variants_raw/including_minority_variants/{sample}.vcf",
+    container:
+        "docker://broadinstitute/gatk:4.3.0.0"
     conda:
         "../envs/gatk_picard.yaml"
     log:
