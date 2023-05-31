@@ -12,7 +12,7 @@ rule filter_snps:
     log:
         OUT + "/log/filter_snps/{sample}.log"
     threads:
-        config["threads"]["fitler_variants"]
+        config["threads"]["filter_variants"]
     resources:
         mem_gb = config["mem_gb"]["filter_variants"]
     shell:
