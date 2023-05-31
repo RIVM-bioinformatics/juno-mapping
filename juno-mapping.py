@@ -18,8 +18,8 @@ from typing import Optional
 from version import __package_name__, __version__, __description__
 
 def main() -> None:
-    juno_template = JunoTemplate()
-    juno_template.run()
+    juno_mapping = JunoMapping()
+    juno_mapping.run()
 
 @dataclass
 class JunoMapping(Pipeline):
