@@ -14,3 +14,7 @@ plots_force_interactive: False   # Try to use only interactive javascript graphs
 plots_flat_numseries: 100        # If neither of the above, use flat if > this number of datasets
 num_datasets_plot_limit: 30      # If interactive, don't plot on load if > this number of datasets
 max_table_rows: 750             # Swap tables for a beeswarm plot above this
+
+extra_fn_clean_trim:
+  - "_bracken_species.kreport2"
+  - "_fastp.json"
