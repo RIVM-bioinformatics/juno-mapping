@@ -29,4 +29,5 @@ include: "workflow/rules/variant_qc.smk"
 
 rule all:
     input:
-        expand(OUT + "/{sample}_combined.fastq", sample=SAMPLES),
+        vcf = expand(OUT + "/variants/{sample}.vcf", sample=SAMPLES),
+        vcf_snps = expand(OUT + "/variants_snps_only/{sample}.snps.vcf", sample=SAMPLES),
