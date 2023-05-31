@@ -93,52 +93,52 @@ O={output.txt} \
 H={output.pdf} 2>&1>{log}
         """
 
-rule get_filter_status:
-    input:
-        vcf = OUT + "/variants/marked/{sample}.vcf",
-    output:
-        tsv = OUT + "/qc_mapping/get_filter_status/{sample}.tsv"
-    message: "Writing filter status of variants to table for {wildcards.sample}"
-    conda:
-        "../envs/gatk_picard.yaml"
-    container:
-        "docker://broadinstitute/gatk:4.3.0.0"
-    log:
-        OUT + "/log/get_filter_status/{sample}.log"
-    threads:
-        config["threads"]["filter_variants"]
-    resources:
-        mem_gb = config["mem_gb"]["filter_variants"]
-    shell:
-        """
-gatk VariantsToTable -V {input.vcf} \
--F CHROM \
--F POS \
--F TYPE \
--F REF \
--F ALT \
--F DP \
--F FILTER \
---show-filtered \
--O {output.tsv} 2>&1>{log}
-        """
+# rule get_filter_status:
+#     input:
+#         vcf = OUT + "/variants/marked/{sample}.vcf",
+#     output:
+#         tsv = OUT + "/qc_mapping/get_filter_status/{sample}.tsv"
+#     message: "Writing filter status of variants to table for {wildcards.sample}"
+#     conda:
+#         "../envs/gatk_picard.yaml"
+#     container:
+#         "docker://broadinstitute/gatk:4.3.0.0"
+#     log:
+#         OUT + "/log/get_filter_status/{sample}.log"
+#     threads:
+#         config["threads"]["filter_variants"]
+#     resources:
+#         mem_gb = config["mem_gb"]["filter_variants"]
+#     shell:
+#         """
+# gatk VariantsToTable -V {input.vcf} \
+# -F CHROM \
+# -F POS \
+# -F TYPE \
+# -F REF \
+# -F ALT \
+# -F DP \
+# -F FILTER \
+# --show-filtered \
+# -O {output.tsv} 2>&1>{log}
+#         """
 
-rule combine_filter_status:
-    input:
-        expand(OUT + "/qc_mapping/get_filter_status/{sample}.tsv", sample = SAMPLES)
-    output:
-        OUT + "/qc_mapping/report_filter_status.tsv"
-    message: "Combining variant QC reports"
-    log:
-        OUT + "/log/combine_filter_status.log"
-    threads:
-        config["threads"]["other"]
-    resources:
-        mem_gb = config["mem_gb"]["other"]
-    shell:
-        """
-python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
-        """
+# rule combine_filter_status:
+#     input:
+#         expand(OUT + "/qc_mapping/get_filter_status/{sample}.tsv", sample = SAMPLES)
+#     output:
+#         OUT + "/qc_mapping/report_filter_status.tsv"
+#     message: "Combining variant QC reports"
+#     log:
+#         OUT + "/log/combine_filter_status.log"
+#     threads:
+#         config["threads"]["other"]
+#     resources:
+#         mem_gb = config["mem_gb"]["other"]
+#     shell:
+#         """
+# python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
+#         """
 
 rule samtools_stats:
     input:
