@@ -103,7 +103,7 @@ rule filter_mask:
     shell:
         """
 bcftools filter \
---mask-file {input.mask_bed} \
+--mask-file {input.mask} \
 --soft-filter "masked_region" \
 {input.vcf} \
 1>{output.vcf} \
