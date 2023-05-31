@@ -104,7 +104,7 @@ rule get_filter_status:
     container:
         "docker://broadinstitute/gatk:4.3.0.0"
     log:
-        OUT + "/logs/get_filter_status/{sample}.log"
+        OUT + "/log/get_filter_status/{sample}.log"
     threads:
         config["threads"]["filter_variants"]
     resources:
@@ -130,7 +130,7 @@ rule combine_filter_status:
         OUT + "/qc_mapping/report_filter_status.tsv"
     message: "Combining variant QC reports"
     log:
-        OUT + "/logs/combine_filter_status.log"
+        OUT + "/log/combine_filter_status.log"
     threads:
         config["threads"]["other"]
     resources:
@@ -150,7 +150,7 @@ rule samtools_stats:
     conda:
         "../envs/gatk_picard.yaml"
     log:
-        OUT + "logs/samtools_stats/{sample}.log"
+        OUT + "/log/samtools_stats/{sample}.log"
     threads:
         config["threads"]["samtools"]
     resources:
