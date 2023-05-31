@@ -92,9 +92,9 @@ rule top_species_multireport:
         "Generating multireport for spcies identification."
     log:
         OUT + "/log/identify_species/multireport.log",
-    threads: config["threads"]["parsing"]
+    threads: config["threads"]["other"]
     resources:
-        mem_gb=config["mem_gb"]["parsing"],
+        mem_gb=config["mem_gb"]["other"],
     shell:
         """
         python bin/make_summary_main_species.py --input-files {input} \
