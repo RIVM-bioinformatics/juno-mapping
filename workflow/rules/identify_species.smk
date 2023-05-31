@@ -51,7 +51,7 @@ rule identify_species:
     message:
         "Running species identification for {wildcards.sample}."
     conda:
-        "../../envs/identify_species.yaml"
+        "../envs/identify_species.yaml"
     container:
         "library://alesr13/default/kraken2_bracken:v2.1.2_v2.6.1"
     params:

@@ -10,7 +10,7 @@ rule clean_fastq:
     message:
         "Filtering low quality reads for {wildcards.sample}."
     conda:
-        "../../envs/qc_and_clean.yaml"
+        "../envs/qc_and_clean.yaml"
     container:
         "docker://biocontainers/fastp:v0.20.1_cv1"
     threads: int(config["threads"]["fastp"])
