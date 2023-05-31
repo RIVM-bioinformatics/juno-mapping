@@ -136,7 +136,7 @@ class JunoMapping(Pipeline):
         self.time_limit: int = args.time_limit
         self.species: str = args.species
         self.minimum_depth_variant: int = args.minimum_depth_variant
-        self.minimum_af: float = args.minimum_allele_frequency
+        self.minimum_allele_frequency: float = args.minimum_allele_frequency
 
         return args
     
@@ -187,7 +187,7 @@ class JunoMapping(Pipeline):
             "use_singularity": str(self.snakemake_args['use_singularity']),
             "species": str(self.species),
             "minimum_depth": int(self.minimum_depth_variant),
-            "minimum_af": float(self.minimum_af),
+            "minimum_allele_frequency": float(self.minimum_allele_frequency),
         }
 
 if __name__ == "__main__":
