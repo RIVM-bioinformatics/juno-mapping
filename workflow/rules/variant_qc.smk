@@ -7,8 +7,8 @@ rule filter_snps:
     conda:
         "../envs/bcftools.yaml"
     params:
-        min_af = config["minimal_allele_frequency"],
-        min_depth = config["minimal_depth"],
+        min_af = config["minimum_allele_frequency"],
+        min_depth = config["minimum_depth"],
     log:
         OUT + "/log/filter_snps/{sample}.log"
     threads:

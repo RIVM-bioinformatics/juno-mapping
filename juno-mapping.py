@@ -60,7 +60,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
              "-mpt",
             "--mean-quality-threshold",
-            type = int,
+            type = self.check_number_within_range(minimum=1, maximum=36),
             metavar = "INT",
             default = 28,
             help = "Phred score to be used as threshold for cleaning (filtering) fastq files."
@@ -68,7 +68,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-ws",
             "--window-size",
-            type = int,
+            type = self.check_number_within_range(minimum=1, maximum=1000),
             metavar = "INT",
             default = 5,
             help = "Window size to use for cleaning (filtering) fastq files."
@@ -76,12 +76,53 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-ml",
             "--minimum-length",
-            type = int,
+            type = self.check_number_within_range(minimum=0, maximum=500),
             metavar = "INT",
             default = 50,
             help = "Minimum length for fastq reads to be kept after trimming."
         )
+        self.add_argument(
+            "-md",
+            "--minimum-depth-variant",
+            type = self.check_number_within_range(minimum=0, maximum=9999),
+            metavar = "INT",
+            default = 50,
+            help = "Minimum length for fastq reads to be kept after trimming."
+        )
+        self.add_argument(
+            "-maf",
+            "--minimum-allele-frequency",
+            type = self.check_number_within_range(minimum=0, maximum=1),
+            metavar = "FLOAT",
+            default = 0.8,
+            help = "Minimum allele frequency to filter variants on."
+        )
 
+    def check_number_within_range(value, minimum=0, maximum=1):
+        """
+        Creates a function to check whether a numeric value is within a range, inclusive.
+
+        The generated function can be used by the `type` parameter in argparse.ArgumentParser.
+        See https://stackoverflow.com/a/53446178.
+
+        Args:
+            value: the numeric value to check.
+            minimum: minimum of allowed range, inclusive.
+            maximum: maximum of allowed range, inclusive.
+        
+        Returns:
+            A function which takes a single argument and checks this against the range.
+
+        Raises:
+            argparse.ArgumentTypeError: if the value is outside the range.
+            ValueError: if the value cannot be converted to float.
+        """
+        def generated_func_check_range(value):
+            value_f = float(value)
+            if not (value_f >= minimum) and (value_f <= maximum):
+                raise argparse.ArgumentTypeError(f"Supplied value {value} is not within expected range {minimum} to {maximum}.")
+            return value
+        return generated_func_check_range
         
     def _parse_args(self) -> argparse.Namespace:
         args = super()._parse_args()
@@ -94,6 +135,8 @@ class JunoMapping(Pipeline):
         self.reference: Path = args.reference
         self.time_limit: int = args.time_limit
         self.species: str = args.species
+        self.minimum_depth_variant: int = args.minimum_depth_variant
+        self.minimum_af: float = args.minimum_allele_frequency
 
         return args
     
@@ -112,12 +155,13 @@ class JunoMapping(Pipeline):
                 ] # paths that singularity should be able to read from can be bound by adding to the above list
             )
 
-        # Extra class methods for this pipeline can be invoked here
-        if self.example:
-            self.example_class_method()
+        # # Extra class methods for this pipeline can be invoked here
+        # if self.example:
+        #     self.example_class_method()
         
         # select a reference based on species:
         #self.ref_dir = "/mnt/db/apollo/mapping/"
+        # replace by dictionary if expansion is needed, could also support acronyms (mtb, tb)
         if self.species == "mycobacterium_tuberculosis":
             self.reference = "/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta"
         # elif self.species == "speciesX":
@@ -142,6 +186,8 @@ class JunoMapping(Pipeline):
             "reference": str(self.reference),
             "use_singularity": str(self.snakemake_args['use_singularity']),
             "species": str(self.species),
+            "minimum_depth": int(self.minimum_depth_variant),
+            "minimum_af": float(self.minimum_af),
         }
 
 if __name__ == "__main__":
