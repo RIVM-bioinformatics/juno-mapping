@@ -87,7 +87,7 @@ class JunoMapping(Pipeline):
             "--minimum-depth-variant",
             type = self.check_number_within_range(minimum=0, maximum=9999),
             metavar = "INT",
-            default = 50,
+            default = 10,
             help = "Minimum length for fastq reads to be kept after trimming."
         )
         self.add_argument(
