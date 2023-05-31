@@ -1,53 +1,46 @@
-rule filter_snps:
+rule get_filter_status:
     input:
-        ref = OUT + "/reference/reference.fasta",
-        vcf = OUT + "/variants_raw/including_minority_variants/{sample}.vcf",
+        vcf = OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
     output:
-        vcf = OUT + "/variants/{sample}.vcf",
-    container:
-        "docker://staphb/bcftools:1.16"
-    conda:
-        "../envs/bcftools.yaml"
-    params:
-        min_af = config["minimum_allele_frequency"],
-        min_depth = config["minimum_depth"],
-    log:
-        OUT + "/log/filter_snps/{sample}.log"
-    threads:
-        config["threads"]["filter_variants"]
-    resources:
-        mem_gb = config["mem_gb"]["filter_variants"]
-    shell:
-        """
-bcftools filter \
---include \"FORMAT/AF >= {params.min_af} && FORMAT/DP >= {params.min_depth}\" \
-{input.vcf} \
-1>{output.vcf} \
-2>{log}
-        """
-
-rule select_snps:
-    input:
-        ref = OUT + "/reference/reference.fasta",
-        vcf = OUT + "/variants/{sample}.vcf",
-    output:
-        vcf = OUT + "/variants_snps_only/{sample}.snps.vcf",
-    container:
-        "docker://broadinstitute/gatk:4.3.0.0"
+        tsv = OUT + "/variant_qc/get_filter_status/{sample}.tsv"
+    message: "Writing filter status of variants to table for {wildcards.sample}"
     conda:
         "../envs/gatk_picard.yaml"
+    container:
+        "docker://broadinstitute/gatk:4.3.0.0"
     log:
-        OUT + "/log/select_snps/{sample}.log"
+        OUT + "/log/get_filter_status/{sample}.log"
     threads:
         config["threads"]["filter_variants"]
     resources:
         mem_gb = config["mem_gb"]["filter_variants"]
     shell:
         """
-gatk SelectVariants \
--R {input.ref} \
--V {input.vcf} \
---select-type-to-include SNP \
---exclude-filtered \
--O {output.vcf} 2>&1>{log}
+gatk VariantsToTable -V {input.vcf} \
+-F CHROM \
+-F POS \
+-F TYPE \
+-F REF \
+-F ALT \
+-F DP \
+-F FILTER \
+--show-filtered \
+-O {output.tsv} 2>&1>{log}
+        """
+
+rule combine_filter_status:
+    input:
+        expand(OUT + "/variant_qc/get_filter_status/{sample}.tsv", sample = SAMPLES)
+    output:
+        OUT + "/variant_qc/report_filter_status.tsv"
+    message: "Combining variant QC reports"
+    log:
+        OUT + "/log/combine_filter_status.log"
+    threads:
+        config["threads"]["other"]
+    resources:
+        mem_gb = config["mem_gb"]["other"]
+    shell:
+        """
+python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
         """

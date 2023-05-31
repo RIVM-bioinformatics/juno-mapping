@@ -52,6 +52,21 @@ class JunoMapping(Pipeline):
             required=False
         )
         self.add_argument(
+            "--mask",
+            type=Path,
+            metavar="FILE",
+            dest="custom_mask",
+            help="Mask file to use, defaults per species can be found in: /mnt/db/juno/mapping/[species]",
+            required=False
+        )
+        self.add_argument(
+            "--disable-mask",
+            action="store_true",
+            dest="disable_mask",
+            help="Disable masking, use at your own risk",
+            required=False
+        )
+        self.add_argument(
             "--db-dir",
             type=Path,
             default="/mnt/db/juno/kraken2_db",
@@ -135,6 +150,9 @@ class JunoMapping(Pipeline):
         self.min_read_length: int = args.minimum_length
         self.reference: Path = None
         self.custom_reference: Path = args.custom_reference
+        self.mask: Path = None
+        self.custom_mask: Path = args.custom_mask
+        self.disable_mask: bool = args.disable_mask
         self.time_limit: int = args.time_limit
         self.species: str = args.species
         self.minimum_depth_variant: int = args.minimum_depth_variant
@@ -166,6 +184,10 @@ class JunoMapping(Pipeline):
         # replace by dictionary if expansion is needed, could also support acronyms (mtb, tb)
         if self.species == "mycobacterium_tuberculosis":
             self.reference = "/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta"
+            self.mask = "files/RLC_Farhat.bed"
+        else:
+            self.reference = None
+            self.mask = None
         # elif self.species == "speciesX":
         #     self.reference = "/mnt/db/juno/mapping/speciesX/awesome_assembly.fasta"
 
@@ -173,7 +195,19 @@ class JunoMapping(Pipeline):
             print("A reference genome was specified by the user, which may not be the default reference genome for this species.")
             self.reference = self.custom_reference
 
+        if self.custom_mask is not None:
+            print("A mask file was specified by the user, which may not be the default mask file for this species.")
+            self.mask = self.custom_mask
+
+        if self.disable_mask:
+            print("Masking was disabled by the user, which may not be the default for this species.")
+            self.mask = None
+
         print(f"Running pipeline for {self.species} with reference: {self.reference}.")
+        if self.mask is None:
+            print(f"Masking will not be performed.")
+        else:
+            print(f"Masking will be performed using {self.mask}.")
 
         with open(
             Path(__file__).parent.joinpath("config/pipeline_parameters.yaml")
@@ -190,6 +224,8 @@ class JunoMapping(Pipeline):
             "window_size": int(self.window_size),
             "min_read_length": int(self.min_read_length),
             "reference": str(self.reference),
+            "mask_bed": str(self.mask),
+            "disable_mask": str(self.disable_mask),
             "use_singularity": str(self.snakemake_args['use_singularity']),
             "species": str(self.species),
             "minimum_depth": int(self.minimum_depth_variant),
