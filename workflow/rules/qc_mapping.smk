@@ -149,6 +149,10 @@ rule samtools_stats:
         "../envs/gatk_picard.yaml"
     log:
         OUT + "logs/samtools_stats/{sample}.log"
+    threads:
+        config["threads"]["samtools"]
+    resources:
+        mem_gb = config["mem_gb"]["samtools"]
     shell:
         """
 samtools stats {input} > {output} 2>{log}

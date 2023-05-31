@@ -9,15 +9,15 @@ rule identify_species_reads:
         + "/identify_species/reads/{sample}/{sample}_bracken_species.kreport2",
     message:
         "Running species identification for {wildcards.sample}."
-    log:
-        OUT + "/log/identify_species/reads/{sample}.log",
-    threads: config["threads"]["kraken2"]
     conda:
         "../../envs/identify_species.yaml"
     container:
         "library://alesr13/default/kraken2_bracken:v2.1.2_v2.6.1"
     params:
         kraken_db=config["db_dir"],
+    log:
+        OUT + "/log/identify_species/reads/{sample}.log",
+    threads: config["threads"]["kraken2"]
     resources:
         mem_gb=config["mem_gb"]["kraken2"],
     shell:
@@ -50,15 +50,15 @@ rule identify_species:
         + "/identify_species/contigs/{sample}/{sample}_bracken_species.kreport2",
     message:
         "Running species identification for {wildcards.sample}."
-    log:
-        OUT + "/log/identify_species/contigs/{sample}.log",
-    threads: config["threads"]["kraken2"]
     conda:
         "../../envs/identify_species.yaml"
     container:
         "library://alesr13/default/kraken2_bracken:v2.1.2_v2.6.1"
     params:
         kraken_db=config["db_dir"],
+    log:
+        OUT + "/log/identify_species/contigs/{sample}.log",
+    threads: config["threads"]["kraken2"]
     resources:
         mem_gb=config["mem_gb"]["kraken2"],
     shell:

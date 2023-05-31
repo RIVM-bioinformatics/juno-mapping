@@ -1,5 +1,25 @@
 threads:
-    template_rule: 1
+    fastp: 4
+    fastqc: 1
+    bwa: 8
+    picard: 1
+    gatk: 2
+    filter_variants: 2
+    kraken2: 8
+    samtools: 4
+    multiqc: 1
+    bbtools: 1
+    other: 1
 
 mem_gb:
-    template_rule: 1
+    fastp: 8
+    fastqc: 4
+    bwa: 32
+    picard: 64
+    gatk: 32
+    filter_variants: 8
+    kraken2: 64
+    samtools: 8
+    multiqc: 8
+    bbtools: 6
+    other: 8

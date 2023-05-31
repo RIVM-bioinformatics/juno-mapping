@@ -11,6 +11,10 @@ rule filter_snps:
         min_depth = config["minimal_depth"],
     log:
         OUT + "/log/filter_snps/{sample}.log"
+    threads:
+        config["threads"]["fitler_variants"]
+    resources:
+        mem_gb = config["mem_gb"]["filter_variants"]
     shell:
         """
 bcftools filter \
@@ -30,6 +34,10 @@ rule select_snps:
         "../envs/gatk_picard.yaml"
     log:
         OUT + "/log/select_snps/{sample}.log"
+    threads:
+        config["threads"]["filter_variants"]
+    resources:
+        mem_gb = config["mem_gb"]["filter_variants"]
     shell:
         """
 gatk SelectVariants \

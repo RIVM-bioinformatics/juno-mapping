@@ -16,6 +16,10 @@ rule Mutect2:
     threads: 4
     log:
         OUT + "/log/variant_calling/{sample}.log"
+    threads:
+        config["threads"]["gatk"]
+    resources:
+        mem_gb = config["mem_gb"]["gatk"]
     shell:
         """
 gatk Mutect2 \
@@ -38,6 +42,10 @@ rule FilterMutectCalls:
         "../envs/gatk_picard.yaml"
     log:
         OUT + "/log/FilterMutectCalls/{sample}.log"
+    threads:
+        config["threads"]["filter_variants"]
+    resources:
+        mem_gb = config["mem_gb"]["filter_variants"]
     shell:
         """
 gatk FilterMutectCalls -V {input.vcf} \

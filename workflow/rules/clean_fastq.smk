@@ -13,9 +13,9 @@ rule clean_fastq:
         "../../envs/qc_and_clean.yaml"
     container:
         "docker://biocontainers/fastp:v0.20.1_cv1"
-    threads: int(config["threads"]["trimmomatic"])
+    threads: int(config["threads"]["fastp"])
     resources:
-        mem_gb=config["mem_gb"]["trimmomatic"],
+        mem_gb=config["mem_gb"]["fastp"],
     log:
         OUT + "/log/clean_fastq/clean_fastq_{sample}.log",
     params:
