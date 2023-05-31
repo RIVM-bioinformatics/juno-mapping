@@ -142,9 +142,9 @@ python workflow/scripts/combine_variant_tables.py --input {input} --output {outp
 
 rule samtools_stats:
     input:
-        bam = OUT + "bwa_out/{sample}.bam",
+        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
-        stats = OUT + "qc_mapping/samtools_stats/{sample}.txt"
+        stats = OUT + "/qc_mapping/samtools_stats/{sample}.txt"
     container:
         "docker://staphb/samtools:1.17"
     conda:
