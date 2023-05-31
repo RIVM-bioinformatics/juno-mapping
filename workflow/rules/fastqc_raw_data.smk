@@ -24,5 +24,5 @@ rule qc_raw_fastq:
         OUT + "/log/qc_raw_fastq/qc_raw_fastq_{sample}_{read}.log",
     shell:
         """
-        bash bin/fastqc_wrapper.sh {input} {params.output_dir} {output.html} {output.zip} {log} > {log} 2>&1
+        bash workflow/scripts/fastqc_wrapper.sh {input} {params.output_dir} {output.html} {output.zip} {log} > {log} 2>&1
         """

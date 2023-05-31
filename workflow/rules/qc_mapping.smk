@@ -43,7 +43,7 @@ rule parse_bbtools:
     log:
         OUT + "/log/qc_mapping/pileup_contig_metrics_combined.log",
     script:
-        "../scripts/parse_bbtools.py"
+        "workflow/scripts/parse_bbtools.py"
 
 rule parse_bbtools_summary:
     input:

@@ -97,6 +97,6 @@ rule top_species_multireport:
         mem_gb=config["mem_gb"]["other"],
     shell:
         """
-        python bin/make_summary_main_species.py --input-files {input} \
+        python workflow/scripts/make_summary_main_species.py --input-files {input} \
                                                 --output-multireport {output} > {log}
         """
