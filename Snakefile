@@ -25,9 +25,11 @@ include: "workflow/rules/map_clean_reads.smk"
 include: "workflow/rules/qc_mapping.smk"
 include: "workflow/rules/variant_calling.smk"
 include: "workflow/rules/variant_qc.smk"
+include: "workflow/rules/multiqc_report.smk"
 
 
 rule all:
     input:
         vcf = expand(OUT + "/variants/{sample}.vcf", sample=SAMPLES),
         vcf_snps = expand(OUT + "/variants_snps_only/{sample}.snps.vcf", sample=SAMPLES),
+        multiqc = OUT + "/multiqc/multiqc.html",

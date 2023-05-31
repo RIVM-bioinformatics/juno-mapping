@@ -17,11 +17,11 @@ rule multiqc:
             sample=SAMPLES,
         ),
         expand(
-            OUT + "/identify_species/{sample}/{sample}_bracken_species.kreport2",
+            OUT + "/identify_species/reads/{sample}/{sample}_bracken_species.kreport2",
             sample=SAMPLES,
         ),
         expand(
-            OUT + "qc_mapping/samtools_stats/{sample}.txt",
+            OUT + "/qc_mapping/samtools_stats/{sample}.txt",
             sample=SAMPLES,
         ),
     output:
