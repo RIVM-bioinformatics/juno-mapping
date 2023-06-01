@@ -30,9 +30,10 @@ gatk VariantsToTable -V {input.vcf} \
 
 rule combine_filter_status:
     input:
-        expand(OUT + "/qc_variant_calling/get_filter_status/{sample}.tsv", sample = SAMPLES)
+        tsv = expand(OUT + "/qc_variant_calling/get_filter_status/{sample}.tsv", sample = SAMPLES),
+        header = "files/report_filter_status.mqc"
     output:
-        OUT + "/qc_variant_calling/report_filter_status.tsv"
+        OUT + "/qc_variant_calling/report_filter_status_mqc.tsv"
     message: "Combining variant QC reports"
     log:
         OUT + "/log/combine_filter_status.log"
@@ -42,7 +43,7 @@ rule combine_filter_status:
         mem_gb = config["mem_gb"]["other"]
     shell:
         """
-python workflow/scripts/combine_variant_tables.py --input {input} --output {output} --fields FILTER
+python workflow/scripts/combine_variant_tables.py --input {input.tsv} --output {output} --fields FILTER --mqc {input.header}
         """
 
 rule bcftools_stats:

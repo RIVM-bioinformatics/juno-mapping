@@ -44,6 +44,7 @@ rule multiqc:
             OUT + "/qc_variant_calling/bcftools_stats/{sample}.txt",
             sample=SAMPLES,
         ),
+        OUT + "/qc_variant_calling/report_filter_status_mqc.tsv"
     output:
         OUT + "/multiqc/multiqc.html",
         json = OUT + "/multiqc/multiqc_data/multiqc_data.json",
