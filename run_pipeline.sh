@@ -4,14 +4,21 @@ set -euo pipefail
 
 #----------------------------------------------#
 # User parameters
-if [ ! -z "${1}" ] || [ ! -z "${2}" ] #|| [ ! -z "${irods_input_projectID}" ]
+if [ ! -z "${1}" ] || [ ! -z "${2}" ] || [ ! -z "${irods_input_projectID}" ]
 then
    input_dir="${1}"
    output_dir="${2}"
-#    PROJECT_NAME="${irods_input_projectID}"
+   PROJECT_NAME="${irods_input_projectID}"
+   EXCLUSION_FILE=""
 else
     echo "One of the parameters is missing, make sure there is an input directory, output directory and project name(param 1, 2 or irods_input_projectID)."
     exit 1
+fi
+
+#check if there is an exclusion file, if so change the parameter
+if [ ! -z "${irods_input_sequencing__run_id}" ] && [ -f "/data/BioGrid/NGSlab/sample_sheets/${irods_input_sequencing__run_id}.exclude" ]
+then
+  EXCLUSION_FILE="/data/BioGrid/NGSlab/sample_sheets/${irods_input_sequencing__run_id}.exclude"
 fi
 
 if [ ! -d "${input_dir}" ] || [ ! -d "${output_dir}" ]
@@ -25,7 +32,7 @@ fi
 #----------------------------------------------#
 # Create/update necessary environments
 PATH_MAMBA_YAML="envs/mamba.yaml"
-PATH_MASTER_YAML="envs/template_master.yaml"
+PATH_MASTER_YAML="envs/juno_mapping.yaml"
 MAMBA_NAME=$(head -n 1 ${PATH_MAMBA_YAML} | cut -f2 -d ' ')
 MASTER_NAME=$(head -n 1 ${PATH_MASTER_YAML} | cut -f2 -d ' ')
 
@@ -46,6 +53,18 @@ source activate "${MASTER_NAME}"
 #----------------------------------------------#
 # Run the pipeline
 
+case $PROJECT_NAME in
+  adhoc)
+    SPECIES="NotProvided"
+    ;;
+  myco|myco_kncv)
+    SPECIES="Mycobacterium_tuberculosis"
+    ;;
+  *)
+    SPECIES="NotProvided"
+    ;;
+esac
+
 echo -e "\nRun pipeline..."
 
 if [ ! -z ${irods_runsheet_sys__runsheet__lsf_queue} ]; then
@@ -55,10 +74,34 @@ else
 fi
 
 set -euo pipefail
+set -x
 
-python template.py --queue "${QUEUE}" -i "${input_dir}" -o "${output_dir}"
+# Setting up the tmpdir for singularity as the current directory (default is /tmp but it gets full easily)
+# Containers will use it for storing tmp files when building a container
+export SINGULARITY_TMPDIR="$(pwd)"
 
-result=$?
+#without exclusion file
+if [ "${EXCLUSION_FILE}" == "" ]
+then
+    python juno_mapping.py \
+        --queue "${QUEUE}" \
+        -i "${input_dir}" \
+        -o "${output_dir}" \
+        -s "${SPECIES}" \
+        --prefix "/mnt/db/juno/sing_containers"
+
+        result=$?
+else
+    python juno_mapping.py \
+        --queue "${QUEUE}" \
+        -i "${input_dir}" \
+        -o "${output_dir}" \
+        -s "${SPECIES}" \
+        --prefix "/mnt/db/juno/sing_containers" \
+        -ex "${EXCLUSION_FILE}"
+
+        result=$?
+fi
 
 # Propagate metadata
 
