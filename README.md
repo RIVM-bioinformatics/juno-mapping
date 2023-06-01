@@ -29,7 +29,7 @@ The pipeline uses the following tools:
 9. [MultiQC](https://multiqc.info/) is used to summarize analysis results and quality assessments in a single report for dynamic visualization.
 10. [Kraken2](https://ccb.jhu.edu/software/kraken2/) and [Bracken](http://ccb.jhu.edu/software/bracken/) for identification of bacterial species.  
 
-![Image of pipeline](https://github.com/RIVM-bioinformatics/juno-assembly/blob/master/files/DAG.svg)
+![Image of pipeline](https://github.com/RIVM-bioinformatics/juno-assembly/blob/master/files/juno_mapping.svg)
 
 ## Prerequisities
 
