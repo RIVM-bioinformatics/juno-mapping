@@ -63,7 +63,7 @@ class JunoMapping(Pipeline):
             "--disable-mask",
             action="store_true",
             dest="disable_mask",
-            help="Disable masking, use at your own risk",
+            help="Disable masking, use at your own risk: this might cause the appearance of low quality variants in the final VCF file.",
             required=False
         )
         self.add_argument(
