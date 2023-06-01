@@ -28,3 +28,20 @@ picard_config:
 
 bcftools:
   collapse_complementary_changes: true
+
+remove_sections:
+  - bcftools-stats_variant_quality_plot
+
+custom_plot_config:
+  bcftools_stats_indel-lengths:
+    xmin: 0
+
+show_hide_buttons:
+  - Show only read files
+  - Hide all read files
+show_hide_mode:
+  - show
+  - hide
+show_hide_patterns:
+  - ['_1', '_2', '_pR1', '_pR2']
+  - ['_1', '_2', '_pR1', '_pR2']
