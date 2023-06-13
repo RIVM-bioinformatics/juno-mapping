@@ -1,3 +1,6 @@
+[![Super linter](https://github.com/RIVM-bioinformatics/juno-mapping/actions/workflows/super-linter.yaml/badge.svg)](https://github.com/RIVM-bioinformatics/juno-mapping/actions/workflows/super-linter.yaml)
+
+
 <div align="center">
     <h1>Juno-Mapping</h1>
     <br />
