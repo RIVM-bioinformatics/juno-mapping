@@ -44,11 +44,11 @@ rule multiqc:
             OUT + "/qc_variant_calling/bcftools_stats/{sample}.txt",
             sample=SAMPLES,
         ),
-        OUT + "/qc_variant_calling/report_filter_status_mqc.tsv"
+        OUT + "/qc_variant_calling/report_filter_status_mqc.tsv",
     output:
         OUT + "/multiqc/multiqc.html",
-        json = OUT + "/multiqc/multiqc_data/multiqc_data.json",
-        txt = OUT + "/multiqc/multiqc_data/multiqc_fastqc.txt",
+        json=OUT + "/multiqc/multiqc_data/multiqc_data.json",
+        txt=OUT + "/multiqc/multiqc_data/multiqc_fastqc.txt",
     message:
         "Making MultiQC report."
     conda:
@@ -59,8 +59,8 @@ rule multiqc:
     resources:
         mem_gb=config["mem_gb"]["multiqc"],
     params:
-        config_file = "config/multiqc_config.yaml",
-        output_dir = OUT + "/multiqc",
+        config_file="config/multiqc_config.yaml",
+        output_dir=OUT + "/multiqc",
     log:
         OUT + "/log/multiqc/multiqc.log",
     shell:

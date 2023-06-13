@@ -2,8 +2,7 @@ rule pileup_contig_metrics:
     input:
         bam=OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
-        summary=OUT
-        + "/qc_mapping/bbtools/per_sample/{sample}_MinLenFiltSummary.tsv",
+        summary=OUT + "/qc_mapping/bbtools/per_sample/{sample}_MinLenFiltSummary.tsv",
         perScaffold=OUT
         + "/qc_mapping/bbtools/per_sample/{sample}_perMinLenFiltScaffold.tsv",
     message:
@@ -27,6 +26,7 @@ samstreamer=t 2> {output.summary}
 cp {output.summary} {log}
         """
 
+
 rule parse_bbtools:
     input:
         expand(
@@ -45,11 +45,11 @@ rule parse_bbtools:
     script:
         "workflow/scripts/parse_bbtools.py"
 
+
 rule parse_bbtools_summary:
     input:
         expand(
-            OUT
-            + "/qc_mapping/bbtools/per_sample/{sample}_MinLenFiltSummary.tsv",
+            OUT + "/qc_mapping/bbtools/per_sample/{sample}_MinLenFiltSummary.tsv",
             sample=SAMPLES,
         ),
     output:
@@ -68,23 +68,24 @@ python workflow/scripts/parse_bbtools_summary.py \
 -o {output} 2>&1> {log}
         """
 
+
 rule get_insert_size:
     input:
-        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
+        bam=OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
-        txt = OUT + "/qc_mapping/insertsize/{sample}_metrics.txt",
-        pdf = OUT + "/qc_mapping/insertsize/{sample}_report.pdf",
-    message: "Calculating insert size for {wildcards.sample}"
+        txt=OUT + "/qc_mapping/insertsize/{sample}_metrics.txt",
+        pdf=OUT + "/qc_mapping/insertsize/{sample}_report.pdf",
+    message:
+        "Calculating insert size for {wildcards.sample}"
     conda:
         "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
     log:
-        OUT + "/log/get_insert_size/{sample}.log"
-    threads:
-        config["threads"]["picard"]
+        OUT + "/log/get_insert_size/{sample}.log",
+    threads: config["threads"]["picard"]
     resources:
-        mem_gb = config["mem_gb"]["picard"]
+        mem_gb=config["mem_gb"]["picard"],
     shell:
         """
 java -jar /usr/picard/picard.jar CollectInsertSizeMetrics \
@@ -92,6 +93,7 @@ I={input.bam} \
 O={output.txt} \
 H={output.pdf} 2>&1>{log}
         """
+
 
 # rule samtools_stats:
 #     input:
@@ -113,12 +115,13 @@ H={output.pdf} 2>&1>{log}
 # samtools stats {input} > {output} 2>{log}
 #         """
 
+
 rule CollectAlignmentSummaryMetrics:
     input:
-        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
-        ref = OUT + "/reference/reference.fasta",
+        bam=OUT + "/mapped_reads/duprem/{sample}.bam",
+        ref=OUT + "/reference/reference.fasta",
     output:
-        txt = OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
+        txt=OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
     container:
         "docker://broadinstitute/picard:2.27.5"
     shell:
@@ -126,14 +129,15 @@ rule CollectAlignmentSummaryMetrics:
 java -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
         """
 
+
 rule CollectGcBiasMetrics:
     input:
-        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
-        ref = OUT + "/reference/reference.fasta",
+        bam=OUT + "/mapped_reads/duprem/{sample}.bam",
+        ref=OUT + "/reference/reference.fasta",
     output:
-        txt = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
-        pdf = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.pdf",
-        summary = OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.summary.txt",
+        txt=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
+        pdf=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.pdf",
+        summary=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.summary.txt",
     container:
         "docker://broadinstitute/picard:2.27.5"
     shell:
@@ -141,11 +145,12 @@ rule CollectGcBiasMetrics:
 java -jar /usr/picard/picard.jar CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
         """
 
+
 rule CollectQualityYieldMetrics:
     input:
-        bam = OUT + "/mapped_reads/duprem/{sample}.bam",
+        bam=OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
-        txt = OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
+        txt=OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
     container:
         "docker://broadinstitute/picard:2.27.5"
     shell:
@@ -153,12 +158,13 @@ rule CollectQualityYieldMetrics:
 java -jar /usr/picard/picard.jar CollectQualityYieldMetrics -I {input.bam} -O {output}
         """
 
+
 rule CollectWgsMetrics:
     input:
-        bam = OUT + "/mapped_reads/sorted/{sample}.bam",
-        ref = OUT + "/reference/reference.fasta",
+        bam=OUT + "/mapped_reads/sorted/{sample}.bam",
+        ref=OUT + "/reference/reference.fasta",
     output:
-        txt = OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
+        txt=OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
     container:
         "docker://broadinstitute/picard:2.27.5"
     shell:

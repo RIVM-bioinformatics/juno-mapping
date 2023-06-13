@@ -1,7 +1,7 @@
 import yaml
 
 
-sample_sheet=config["sample_sheet"]
+sample_sheet = config["sample_sheet"]
 with open(sample_sheet) as f:
     SAMPLES = yaml.safe_load(f)
 
@@ -12,6 +12,7 @@ for param in ["threads", "mem_gb"]:
 # print(SAMPLES)
 
 OUT = config["output_dir"]
+
 
 localrules:
     all,
@@ -31,8 +32,7 @@ include: "workflow/rules/multiqc_report.smk"
 
 rule all:
     input:
-        vcf = expand(OUT + "/variants/{sample}.vcf", sample=SAMPLES),
-        vcf_snps = expand(OUT + "/variants_snps_only/{sample}.snps.vcf", sample=SAMPLES),
-        multiqc = OUT + "/multiqc/multiqc.html",
-        filter_report = OUT + "/qc_variant_calling/report_filter_status_mqc.tsv"
-
+        vcf=expand(OUT + "/variants/{sample}.vcf", sample=SAMPLES),
+        vcf_snps=expand(OUT + "/variants_snps_only/{sample}.snps.vcf", sample=SAMPLES),
+        multiqc=OUT + "/multiqc/multiqc.html",
+        filter_report=OUT + "/qc_variant_calling/report_filter_status_mqc.tsv",
