@@ -17,11 +17,15 @@ from juno_library import Pipeline
 from typing import Optional, Callable, Union, Any
 from version import __package_name__, __version__, __description__
 
+
 def main() -> None:
     juno_mapping = JunoMapping()
     juno_mapping.run()
 
-def check_number_within_range(minimum : float = 0, maximum : float = 1) -> Union[Callable[[str], str], argparse.FileType]:
+
+def check_number_within_range(
+    minimum: float = 0, maximum: float = 1
+) -> Union[Callable[[str], str], argparse.FileType]:
     """
     Creates a function to check whether a numeric value is within a range, inclusive.
 
@@ -32,7 +36,7 @@ def check_number_within_range(minimum : float = 0, maximum : float = 1) -> Union
         value: the numeric value to check.
         minimum: minimum of allowed range, inclusive.
         maximum: maximum of allowed range, inclusive.
-    
+
     Returns:
         A function which takes a single argument and checks this against the range.
 
@@ -40,12 +44,17 @@ def check_number_within_range(minimum : float = 0, maximum : float = 1) -> Union
         argparse.ArgumentTypeError: if the value is outside the range.
         ValueError: if the value cannot be converted to float.
     """
-    def generated_func_check_range(value : str) -> str:
+
+    def generated_func_check_range(value: str) -> str:
         value_f = float(value)
         if (value_f < minimum) or (value_f > maximum):
-            raise argparse.ArgumentTypeError(f"Supplied value {value} is not within expected range {minimum} to {maximum}.")
+            raise argparse.ArgumentTypeError(
+                f"Supplied value {value} is not within expected range {minimum} to {maximum}."
+            )
         return str(value)
+
     return generated_func_check_range
+
 
 @dataclass
 class JunoMapping(Pipeline):
@@ -57,8 +66,10 @@ class JunoMapping(Pipeline):
     def _add_args_to_parser(self) -> None:
         super()._add_args_to_parser()
 
-        self.parser.description = "Juno-mapping pipeline for reference mapping of bacterial genomes"
-        
+        self.parser.description = (
+            "Juno-mapping pipeline for reference mapping of bacterial genomes"
+        )
+
         self.add_argument(
             "-s",
             "--species",
@@ -67,7 +78,7 @@ class JunoMapping(Pipeline):
             required=True,
             metavar="STR",
             help=f"Species to use, choose from: {self.species_options}",
-            choices=self.species_options
+            choices=self.species_options,
         )
         self.add_argument(
             "--reference",
@@ -75,7 +86,7 @@ class JunoMapping(Pipeline):
             metavar="FILE",
             dest="custom_reference",
             help="Reference genome to use. Default is chosen based on species argument, defaults per species can be found in: /mnt/db/juno/mapping/[species]",
-            required=False
+            required=False,
         )
         self.add_argument(
             "--mask",
@@ -83,14 +94,14 @@ class JunoMapping(Pipeline):
             metavar="FILE",
             dest="custom_mask",
             help="Mask file to use, defaults per species can be found in: /mnt/db/juno/mapping/[species]",
-            required=False
+            required=False,
         )
         self.add_argument(
             "--disable-mask",
             action="store_true",
             dest="disable_mask",
             help="Disable masking, use at your own risk: this might cause the appearance of low quality variants in the final VCF file.",
-            required=False
+            required=False,
         )
         self.add_argument(
             "--db-dir",
@@ -100,48 +111,46 @@ class JunoMapping(Pipeline):
             help="Kraken2 database directory.",
         )
         self.add_argument(
-             "-mpt",
+            "-mpt",
             "--mean-quality-threshold",
-            type = check_number_within_range(minimum=1, maximum=36),
-            metavar = "INT",
-            default = 28,
-            help = "Phred score to be used as threshold for cleaning (filtering) fastq files."
+            type=check_number_within_range(minimum=1, maximum=36),
+            metavar="INT",
+            default=28,
+            help="Phred score to be used as threshold for cleaning (filtering) fastq files.",
         )
         self.add_argument(
             "-ws",
             "--window-size",
-            type = check_number_within_range(minimum=1, maximum=1000),
-            metavar = "INT",
-            default = 5,
-            help = "Window size to use for cleaning (filtering) fastq files."
+            type=check_number_within_range(minimum=1, maximum=1000),
+            metavar="INT",
+            default=5,
+            help="Window size to use for cleaning (filtering) fastq files.",
         )
         self.add_argument(
             "-ml",
             "--minimum-length",
-            type = check_number_within_range(minimum=0, maximum=500),
-            metavar = "INT",
-            default = 50,
-            help = "Minimum length for fastq reads to be kept after trimming."
+            type=check_number_within_range(minimum=0, maximum=500),
+            metavar="INT",
+            default=50,
+            help="Minimum length for fastq reads to be kept after trimming.",
         )
         self.add_argument(
             "-md",
             "--minimum-depth-variant",
-            type = check_number_within_range(minimum=0, maximum=9999),
-            metavar = "INT",
-            default = 10,
-            help = "Minimum length for fastq reads to be kept after trimming."
+            type=check_number_within_range(minimum=0, maximum=9999),
+            metavar="INT",
+            default=10,
+            help="Minimum length for fastq reads to be kept after trimming.",
         )
         self.add_argument(
             "-maf",
             "--minimum-allele-frequency",
-            type = check_number_within_range(minimum=0, maximum=1),
-            metavar = "FLOAT",
-            default = 0.8,
-            help = "Minimum allele frequency to filter variants on."
+            type=check_number_within_range(minimum=0, maximum=1),
+            metavar="FLOAT",
+            default=0.8,
+            help="Minimum allele frequency to filter variants on.",
         )
 
-    
-        
     def _parse_args(self) -> argparse.Namespace:
         args = super()._parse_args()
 
@@ -161,7 +170,7 @@ class JunoMapping(Pipeline):
         self.minimum_allele_frequency: float = args.minimum_allele_frequency
 
         return args
-    
+
     # # Extra class methods for this pipeline can be defined here
     # def example_class_method(self):
     #     print(f"example option is set to {self.example}")
@@ -174,18 +183,20 @@ class JunoMapping(Pipeline):
                 [
                     self.snakemake_args["singularity_args"],
                     f"--bind {self.db_dir}:{self.db_dir}",
-                ] # paths that singularity should be able to read from can be bound by adding to the above list
+                ]  # paths that singularity should be able to read from can be bound by adding to the above list
             )
 
         # # Extra class methods for this pipeline can be invoked here
         # if self.example:
         #     self.example_class_method()
-        
+
         # select a reference based on species:
-        #self.ref_dir = "/mnt/db/apollo/mapping/"
+        # self.ref_dir = "/mnt/db/apollo/mapping/"
         # replace by dictionary if expansion is needed, could also support acronyms (mtb, tb)
         if self.species == "mycobacterium_tuberculosis":
-            self.reference = Path("/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta")
+            self.reference = Path(
+                "/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta"
+            )
             self.mask = Path("files/RLC_Farhat.bed")
         else:
             self.reference = None
@@ -194,15 +205,21 @@ class JunoMapping(Pipeline):
         #     self.reference = "/mnt/db/juno/mapping/speciesX/awesome_assembly.fasta"
 
         if self.custom_reference is not None:
-            print("A reference genome was specified by the user, which may not be the default reference genome for this species.")
+            print(
+                "A reference genome was specified by the user, which may not be the default reference genome for this species."
+            )
             self.reference = self.custom_reference
 
         if self.custom_mask is not None:
-            print("A mask file was specified by the user, which may not be the default mask file for this species.")
+            print(
+                "A mask file was specified by the user, which may not be the default mask file for this species."
+            )
             self.mask = self.custom_mask
 
         if self.disable_mask:
-            print("Masking was disabled by the user, which may not be the default for this species.")
+            print(
+                "Masking was disabled by the user, which may not be the default for this species."
+            )
             self.mask = None
 
         print(f"Running pipeline for {self.species} with reference: {self.reference}.")
@@ -228,11 +245,12 @@ class JunoMapping(Pipeline):
             "reference": str(self.reference),
             "mask_bed": str(self.mask),
             "disable_mask": str(self.disable_mask),
-            "use_singularity": str(self.snakemake_args['use_singularity']),
+            "use_singularity": str(self.snakemake_args["use_singularity"]),
             "species": str(self.species),
             "minimum_depth": int(self.minimum_depth_variant),
             "minimum_allele_frequency": float(self.minimum_allele_frequency),
         }
+
 
 if __name__ == "__main__":
     main()

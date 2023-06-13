@@ -1,6 +1,7 @@
 import argparse
 
-def parse_bbtools_summary(input_bbtools : list[str], output_bbtools : str) -> None:
+
+def parse_bbtools_summary(input_bbtools: list[str], output_bbtools: str) -> None:
     summary_dict = {}
 
     for input_file in input_bbtools:
@@ -12,13 +13,13 @@ def parse_bbtools_summary(input_bbtools : list[str], output_bbtools : str) -> No
         # get the summary stats from each bbtools outputfile
         summary_file = open(input_file, "r")
         for line in summary_file:
-            if ":" in line:  #every line with : contains some information
+            if ":" in line:  # every line with : contains some information
                 variable_name_list.append(line.split(":")[0].strip())
                 value_list.append(line.split(":")[1].strip())
         summary_dict[sample_name] = value_list
 
     # specify a file to write to
-    outfile = open(str(output_bbtools),"w")
+    outfile = open(str(output_bbtools), "w")
 
     # write headers to file
     outfile.write("Sample\t")
@@ -32,26 +33,19 @@ def parse_bbtools_summary(input_bbtools : list[str], output_bbtools : str) -> No
         for item in value:
             outfile.write(item + "\t")
         outfile.write("\n")
-        
+
     outfile.close()
 
-def main(input : list[str], output : str) -> None:
+
+def main(input: list[str], output: str) -> None:
     parse_bbtools_summary(input, output)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-i', '--input', 
-        type=str,
-        required=True,
-        metavar='PATH',
-        nargs='+'
+        "-i", "--input", type=str, required=True, metavar="PATH", nargs="+"
     )
-    parser.add_argument(
-        '-o', '--output',
-        type=str,
-        required=True,
-        metavar='PATH'
-    )
+    parser.add_argument("-o", "--output", type=str, required=True, metavar="PATH")
     args = parser.parse_args()
     main(args.input, args.output)

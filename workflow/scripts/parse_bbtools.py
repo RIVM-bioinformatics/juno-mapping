@@ -1,6 +1,7 @@
 import pandas
 
-def parse_bbtools_perScaffold(input_bbtools : str, output_bbtools : str) -> None:
+
+def parse_bbtools_perScaffold(input_bbtools: str, output_bbtools: str) -> None:
     # create an empty dataframe with the right headers
     bbtools_headers_file = open(input_bbtools[0], "r")
     bbtools_headers = bbtools_headers_file.readline().strip().split("\t")
@@ -13,17 +14,17 @@ def parse_bbtools_perScaffold(input_bbtools : str, output_bbtools : str) -> None
         sample_name = str(input_file).split("sample/")[1].split("_")[0]
 
         # read the data into a pandas dataframe
-        sample_dataframe = pandas.read_csv(input_file, sep='\t')
-        
+        sample_dataframe = pandas.read_csv(input_file, sep="\t")
+
         # add sample name to the dataframe
-        sample_dataframe.insert(0, 'Sample','')
-        sample_dataframe['Sample'] = sample_name
+        sample_dataframe.insert(0, "Sample", "")
+        sample_dataframe["Sample"] = sample_name
 
         # append sample dataframe to master dataframe
-        df_bbtools = pandas.concat([df_bbtools, sample_dataframe], ignore_index = True)
+        df_bbtools = pandas.concat([df_bbtools, sample_dataframe], ignore_index=True)
 
-    #write concat output to file
+    # write concat output to file
     df_bbtools.to_csv(str(output_bbtools), index=False)
 
 
-parse_bbtools_perScaffold(snakemake.input, snakemake.output) # type: ignore[name-defined]
+parse_bbtools_perScaffold(snakemake.input, snakemake.output)  # type: ignore[name-defined]
