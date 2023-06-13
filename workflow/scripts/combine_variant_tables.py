@@ -4,7 +4,7 @@ import pandas as pd
 import pathlib
 import shutil
 
-def main(args):
+def main(args : argparse.Namespace) -> None:
     df = pd.DataFrame()
     for filepath in args.input:
         sample_name = filepath.stem

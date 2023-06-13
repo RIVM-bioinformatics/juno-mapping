@@ -1,13 +1,11 @@
 import pandas
 
-def parse_bbtools_perScaffold(input_bbtools, output_bbtools):
-    print("1")
+def parse_bbtools_perScaffold(input_bbtools : str, output_bbtools : str) -> None:
     # create an empty dataframe with the right headers
     bbtools_headers_file = open(input_bbtools[0], "r")
     bbtools_headers = bbtools_headers_file.readline().strip().split("\t")
     bbtools_headers.insert(0, "Sample")
     df_bbtools = pandas.DataFrame(columns=bbtools_headers)
-    print("2")
     # loop over the bbtools files (perscaffold) and add them to the dataframe
     for input_file in str(input_bbtools).split():
         print(input_file)
@@ -22,10 +20,10 @@ def parse_bbtools_perScaffold(input_bbtools, output_bbtools):
         sample_dataframe['Sample'] = sample_name
 
         # append sample dataframe to master dataframe
-        df_bbtools = df_bbtools.append(sample_dataframe, ignore_index = True)
+        df_bbtools = pandas.concat([df_bbtools, sample_dataframe], ignore_index = True)
 
     #write concat output to file
     df_bbtools.to_csv(str(output_bbtools), index=False)
 
 
-parse_bbtools_perScaffold(snakemake.input, snakemake.output)
+parse_bbtools_perScaffold(snakemake.input, snakemake.output) # type: ignore[name-defined]
