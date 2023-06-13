@@ -14,12 +14,38 @@ import argparse
 import sys
 from dataclasses import dataclass, field
 from juno_library import Pipeline
-from typing import Optional
+from typing import Optional, Callable, Union, Any
 from version import __package_name__, __version__, __description__
 
 def main() -> None:
     juno_mapping = JunoMapping()
     juno_mapping.run()
+
+def check_number_within_range(minimum : float = 0, maximum : float = 1) -> Union[Callable[[str], str], argparse.FileType]:
+    """
+    Creates a function to check whether a numeric value is within a range, inclusive.
+
+    The generated function can be used by the `type` parameter in argparse.ArgumentParser.
+    See https://stackoverflow.com/a/53446178.
+
+    Args:
+        value: the numeric value to check.
+        minimum: minimum of allowed range, inclusive.
+        maximum: maximum of allowed range, inclusive.
+    
+    Returns:
+        A function which takes a single argument and checks this against the range.
+
+    Raises:
+        argparse.ArgumentTypeError: if the value is outside the range.
+        ValueError: if the value cannot be converted to float.
+    """
+    def generated_func_check_range(value : str) -> str:
+        value_f = float(value)
+        if (value_f < minimum) or (value_f > maximum):
+            raise argparse.ArgumentTypeError(f"Supplied value {value} is not within expected range {minimum} to {maximum}.")
+        return str(value)
+    return generated_func_check_range
 
 @dataclass
 class JunoMapping(Pipeline):
@@ -76,7 +102,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
              "-mpt",
             "--mean-quality-threshold",
-            type = self.check_number_within_range(minimum=1, maximum=36),
+            type = check_number_within_range(minimum=1, maximum=36),
             metavar = "INT",
             default = 28,
             help = "Phred score to be used as threshold for cleaning (filtering) fastq files."
@@ -84,7 +110,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-ws",
             "--window-size",
-            type = self.check_number_within_range(minimum=1, maximum=1000),
+            type = check_number_within_range(minimum=1, maximum=1000),
             metavar = "INT",
             default = 5,
             help = "Window size to use for cleaning (filtering) fastq files."
@@ -92,7 +118,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-ml",
             "--minimum-length",
-            type = self.check_number_within_range(minimum=0, maximum=500),
+            type = check_number_within_range(minimum=0, maximum=500),
             metavar = "INT",
             default = 50,
             help = "Minimum length for fastq reads to be kept after trimming."
@@ -100,7 +126,7 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-md",
             "--minimum-depth-variant",
-            type = self.check_number_within_range(minimum=0, maximum=9999),
+            type = check_number_within_range(minimum=0, maximum=9999),
             metavar = "INT",
             default = 10,
             help = "Minimum length for fastq reads to be kept after trimming."
@@ -108,37 +134,13 @@ class JunoMapping(Pipeline):
         self.add_argument(
             "-maf",
             "--minimum-allele-frequency",
-            type = self.check_number_within_range(minimum=0, maximum=1),
+            type = check_number_within_range(minimum=0, maximum=1),
             metavar = "FLOAT",
             default = 0.8,
             help = "Minimum allele frequency to filter variants on."
         )
 
-    def check_number_within_range(value, minimum=0, maximum=1):
-        """
-        Creates a function to check whether a numeric value is within a range, inclusive.
-
-        The generated function can be used by the `type` parameter in argparse.ArgumentParser.
-        See https://stackoverflow.com/a/53446178.
-
-        Args:
-            value: the numeric value to check.
-            minimum: minimum of allowed range, inclusive.
-            maximum: maximum of allowed range, inclusive.
-        
-        Returns:
-            A function which takes a single argument and checks this against the range.
-
-        Raises:
-            argparse.ArgumentTypeError: if the value is outside the range.
-            ValueError: if the value cannot be converted to float.
-        """
-        def generated_func_check_range(value):
-            value_f = float(value)
-            if not (value_f >= minimum) and (value_f <= maximum):
-                raise argparse.ArgumentTypeError(f"Supplied value {value} is not within expected range {minimum} to {maximum}.")
-            return value
-        return generated_func_check_range
+    
         
     def _parse_args(self) -> argparse.Namespace:
         args = super()._parse_args()
@@ -148,9 +150,9 @@ class JunoMapping(Pipeline):
         self.mean_quality_threshold: int = args.mean_quality_threshold
         self.window_size: int = args.window_size
         self.min_read_length: int = args.minimum_length
-        self.reference: Path = None
+        self.reference: Optional[Path] = None
         self.custom_reference: Path = args.custom_reference
-        self.mask: Path = None
+        self.mask: Optional[Path] = None
         self.custom_mask: Path = args.custom_mask
         self.disable_mask: bool = args.disable_mask
         self.time_limit: int = args.time_limit
@@ -183,8 +185,8 @@ class JunoMapping(Pipeline):
         #self.ref_dir = "/mnt/db/apollo/mapping/"
         # replace by dictionary if expansion is needed, could also support acronyms (mtb, tb)
         if self.species == "mycobacterium_tuberculosis":
-            self.reference = "/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta"
-            self.mask = "files/RLC_Farhat.bed"
+            self.reference = Path("/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta")
+            self.mask = Path("files/RLC_Farhat.bed")
         else:
             self.reference = None
             self.mask = None
