@@ -3,7 +3,7 @@ rule identify_species_reads:
         r1=OUT + "/clean_fastq/{sample}_pR1.fastq.gz",
         r2=OUT + "/clean_fastq/{sample}_pR2.fastq.gz",
     output:
-        kraken2_kreport=temp(OUT + "/identify_species/reads/{sample}/{sample}.kreport2"),
+        kraken2_kreport=OUT + "/identify_species/reads/{sample}/{sample}.kreport2",
         bracken_s=OUT + "/identify_species/reads/{sample}/{sample}_species_content.txt",
         bracken_kreport=OUT
         + "/identify_species/reads/{sample}/{sample}_bracken_species.kreport2",
@@ -45,9 +45,7 @@ rule identify_species:
     input:
         OUT + "/de_novo_assembly_filtered/{sample}.fasta",
     output:
-        kraken2_kreport=temp(
-            OUT + "/identify_species/contigs/{sample}/{sample}.kreport2"
-        ),
+        kraken2_kreport=OUT + "/identify_species/contigs/{sample}/{sample}.kreport2",
         bracken_s=OUT
         + "/identify_species/contigs/{sample}/{sample}_species_content.txt",
         bracken_kreport=OUT
