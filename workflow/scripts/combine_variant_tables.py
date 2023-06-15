@@ -3,6 +3,7 @@
 import pandas as pd
 import pathlib
 import shutil
+import argparse
 
 
 def main(args: argparse.Namespace) -> None:
@@ -26,7 +27,6 @@ def main(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    import argparse
 
     parser = argparse.ArgumentParser()
 
