@@ -85,11 +85,27 @@ bcftools filter \
         """
 
 
+rule copy_mask:
+    input:
+        mask=config["mask_bed"],
+    output:
+        mask=OUT + "/variants_raw/mask.bed",
+    log:
+        OUT + "/log/copy_mask.log",
+    threads: config["threads"]["other"]
+    resources:
+        mem_gb=config["mem_gb"]["other"],
+    shell:
+        """
+cp {input.mask} {output.mask}
+        """
+
+
 rule filter_mask:
     input:
         vcf=OUT + "/variants_raw/af_FMC_depth/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
-        mask=config["mask_bed"],
+        mask=OUT + "/variants_raw/mask.bed",
     output:
         vcf=OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
     container:
