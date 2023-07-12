@@ -2,9 +2,8 @@ name: juno_mapping
 channels:
   - conda-forge
   - bioconda
-  - anaconda
   - biocore
-  - defaults
+  - nodefaults
 dependencies:
   - git=2.40.*
   - mamba=1.3.*
