@@ -1,6 +1,6 @@
 rule get_filter_status:
     input:
-        vcf=OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
     output:
         tsv=OUT + "/qc_variant_calling/get_filter_status/{sample}.tsv",
     message:

@@ -1,10 +1,10 @@
 rule filter_af:
     input:
-        vcf=OUT + "/variants_raw/raw/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
         stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/af/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af/{sample}.vcf",
     message:
         "Marking minority variants for {wildcards.sample}"
     container:
@@ -31,11 +31,11 @@ bcftools filter \
 
 rule FilterMutectCalls:
     input:
-        vcf=OUT + "/variants_raw/af/{sample}.vcf",
+        vcf=OUT + "/variants_raw/raw/{sample}.vcf",
         stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/af_FMC/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
     message:
         "Marking low confidence variants for {wildcards.sample}, based on FilterMutectCalls microbial mode"
     container:
@@ -59,10 +59,10 @@ gatk FilterMutectCalls -V {input.vcf} \
 
 rule filter_depth:
     input:
-        vcf=OUT + "/variants_raw/af_FMC/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/af_FMC_depth/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
     container:
         "docker://staphb/bcftools:1.16"
     conda:
@@ -103,11 +103,11 @@ cp {input.mask} {output.mask}
 
 rule filter_mask:
     input:
-        vcf=OUT + "/variants_raw/af_FMC_depth/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
         mask=OUT + "/variants_raw/mask.bed",
     output:
-        vcf=OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
     container:
         "docker://staphb/bcftools:1.16"
     conda:
@@ -130,7 +130,7 @@ bcftools filter \
 
 rule remove_low_confidence_variants:
     input:
-        vcf=OUT + "/variants_raw/af_FMC_depth_masked/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
         vcf=OUT + "/variants/{sample}.vcf",
