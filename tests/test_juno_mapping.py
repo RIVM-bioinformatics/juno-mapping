@@ -50,7 +50,12 @@ class TestJunoMappingDryRun(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        fake_dirs = ["fake_dir_wsamples", "fake_empty_dir", "test_output", "reference.fasta"]
+        fake_dirs = [
+            "fake_dir_wsamples",
+            "fake_empty_dir",
+            "test_output",
+            "reference.fasta",
+        ]
         for folder in fake_dirs:
             os.system("rm -rf {}".format(str(folder)))
 
@@ -60,13 +65,17 @@ class TestJunoMappingDryRun(unittest.TestCase):
             ValueError,
             "does not contain any files with the expected format/naming",
         ):
-            argv=[
-                "-i", "fake_empty_dir",
-                  "-o", "test_output",
-                  "-n",
-                  "--reference", "reference.fasta",
-                  "-s", "mycobacterium_tuberculosis"
-                  ]
+            argv = [
+                "-i",
+                "fake_empty_dir",
+                "-o",
+                "test_output",
+                "-n",
+                "--reference",
+                "reference.fasta",
+                "-s",
+                "mycobacterium_tuberculosis",
+            ]
             pipeline = JunoMapping(argv=argv)
             pipeline.setup()
 
@@ -75,12 +84,16 @@ class TestJunoMappingDryRun(unittest.TestCase):
         full_input_dir = Path("fake_dir_wsamples").resolve()
         pipeline = JunoMapping(
             argv=[
-                "-i", "fake_dir_wsamples",
-                  "-o", "test_output",
-                  "-n",
-                  "--reference", "reference.fasta",
-                  "-s", "mycobacterium_tuberculosis"
-                  ]
+                "-i",
+                "fake_dir_wsamples",
+                "-o",
+                "test_output",
+                "-n",
+                "--reference",
+                "reference.fasta",
+                "-s",
+                "mycobacterium_tuberculosis",
+            ]
         )
         pipeline.run()
         expected_sample_sheet = {
@@ -123,23 +136,32 @@ class TestJunoMappingDryRun(unittest.TestCase):
             "minimum_allele_frequency": 0.8,
             "minimum_depth": 10,
             "disable_mask": "False",
-            "mask_bed": "files/RLC_Farhat.bed"
+            "mask_bed": "files/RLC_Farhat.bed",
         }
         for key, value in expected_user_param_values.items():
-            self.assertTrue(pipeline.user_parameters[key] == value, msg=f"{key} is {pipeline.user_parameters[key]} in user_parameters, expected {value}")
+            self.assertTrue(
+                pipeline.user_parameters[key] == value,
+                msg=f"{key} is {pipeline.user_parameters[key]} in user_parameters, expected {value}",
+            )
 
     def test_junomapping_dryrun_changed_user_params(self) -> None:
         """Check whether user parameters can be changed correctly"""
         pipeline = JunoMapping(
             argv=[
-                "-i", "fake_dir_wsamples",
-                "-o", "test_output",
+                "-i",
+                "fake_dir_wsamples",
+                "-o",
+                "test_output",
                 "-n",
-                "-s", "mycobacterium_tuberculosis",
-                "--reference", "reference.fasta",
+                "-s",
+                "mycobacterium_tuberculosis",
+                "--reference",
+                "reference.fasta",
                 "--disable-mask",
-                "-maf", "0.5",
-                "-md", "20"
+                "-maf",
+                "0.5",
+                "-md",
+                "20",
             ]
         )
         full_input_dir = Path("fake_dir_wsamples").resolve()
@@ -151,11 +173,13 @@ class TestJunoMappingDryRun(unittest.TestCase):
             "minimum_allele_frequency": 0.5,
             "minimum_depth": 20,
             "disable_mask": "True",
-            "mask_bed": "None"
+            "mask_bed": "None",
         }
         for key, value in expected_user_param_values.items():
-            self.assertTrue(pipeline.user_parameters[key] == value, msg=f"{key} is {pipeline.user_parameters[key]} in user_parameters, expected {value}")
-
+            self.assertTrue(
+                pipeline.user_parameters[key] == value,
+                msg=f"{key} is {pipeline.user_parameters[key]} in user_parameters, expected {value}",
+            )
 
     def test_junomapping_fails_with_unsupported_species(self) -> None:
         """Testing the pipeline fails if a fake species is provided"""

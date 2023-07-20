@@ -84,17 +84,18 @@ bcftools filter \
 2>{log}
         """
 
+
 if config["disable_mask"]:
+
     rule copy_mask:
         output:
-            touch(OUT + "/variants_raw/no_mask.bed")
+            touch(OUT + "/variants_raw/no_mask.bed"),
         log:
             OUT + "/log/copy_mask.log",
         shell:
             """
     echo "Masking disabled, making empty file {output}" > {log}
             """
-    
 
     rule filter_mask:
         input:
@@ -115,6 +116,7 @@ if config["disable_mask"]:
             """
 
 else:
+
     rule copy_mask:
         input:
             mask=config["mask_bed"],
@@ -129,7 +131,6 @@ else:
             """
     cp {input.mask} {output.mask}
             """
-
 
     rule filter_mask:
         input:
