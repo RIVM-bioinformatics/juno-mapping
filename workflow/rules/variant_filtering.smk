@@ -84,48 +84,78 @@ bcftools filter \
 2>{log}
         """
 
+if config["disable_mask"]:
+    rule copy_mask:
+        output:
+            touch(OUT + "/variants_raw/no_mask.bed")
+        log:
+            OUT + "/log/copy_mask.log",
+        shell:
+            """
+    echo "Masking disabled, making empty file {output}" > {log}
+            """
+    
 
-rule copy_mask:
-    input:
-        mask=config["mask_bed"],
-    output:
-        mask=OUT + "/variants_raw/mask.bed",
-    log:
-        OUT + "/log/copy_mask.log",
-    threads: config["threads"]["other"]
-    resources:
-        mem_gb=config["mem_gb"]["other"],
-    shell:
-        """
-cp {input.mask} {output.mask}
-        """
+    rule filter_mask:
+        input:
+            vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
+            ref=OUT + "/reference/reference.fasta",
+            mask=OUT + "/variants_raw/no_mask.bed",
+        output:
+            vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
+        log:
+            OUT + "/log/filter_depth/{sample}.log",
+        threads: config["threads"]["filter_variants"]
+        resources:
+            mem_gb=config["mem_gb"]["filter_variants"],
+        shell:
+            """
+    cp {input} {output}
+    echo "Masking disabled, copying {input} to {output}" > {log}
+            """
+
+else:
+    rule copy_mask:
+        input:
+            mask=config["mask_bed"],
+        output:
+            mask=OUT + "/variants_raw/mask.bed",
+        log:
+            OUT + "/log/copy_mask.log",
+        threads: config["threads"]["other"]
+        resources:
+            mem_gb=config["mem_gb"]["other"],
+        shell:
+            """
+    cp {input.mask} {output.mask}
+            """
 
 
-rule filter_mask:
-    input:
-        vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
-        ref=OUT + "/reference/reference.fasta",
-        mask=OUT + "/variants_raw/mask.bed",
-    output:
-        vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
-    container:
-        "docker://staphb/bcftools:1.16"
-    conda:
-        "../envs/bcftools.yaml"
-    log:
-        OUT + "/log/filter_depth/{sample}.log",
-    threads: config["threads"]["filter_variants"]
-    resources:
-        mem_gb=config["mem_gb"]["filter_variants"],
-    shell:
-        """
-bcftools filter \
---mask-file {input.mask} \
---soft-filter "masked_region" \
-{input.vcf} \
-1>{output.vcf} \
-2>{log}
-        """
+    rule filter_mask:
+        input:
+            vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
+            ref=OUT + "/reference/reference.fasta",
+            mask=OUT + "/variants_raw/mask.bed",
+        output:
+            vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
+        container:
+            "docker://staphb/bcftools:1.16"
+        conda:
+            "../envs/bcftools.yaml"
+        log:
+            OUT + "/log/filter_depth/{sample}.log",
+        threads: config["threads"]["filter_variants"]
+        resources:
+            mem_gb=config["mem_gb"]["filter_variants"],
+        shell:
+            """
+    bcftools filter \
+    --mask-file {input.mask} \
+    --soft-filter "masked_region" \
+    {input.vcf} \
+    1>{output.vcf} \
+    2>{log}
+            """
 
 
 rule remove_low_confidence_variants:
