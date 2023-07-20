@@ -85,8 +85,9 @@ bcftools filter \
         """
 
 
-if config["disable_mask"]:
-
+if config["disable_mask"] == "True":
+    # config value is parsed as str
+    
     rule copy_mask:
         output:
             touch(OUT + "/variants_raw/no_mask.bed"),
