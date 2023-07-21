@@ -1,0 +1,8 @@
+channels:
+- bioconda
+- conda-forge
+- defaults
+dependencies:
+- bcftools=1.16
+- gsl=2.7.0
+- bedtools

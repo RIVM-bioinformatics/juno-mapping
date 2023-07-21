@@ -1,0 +1,12 @@
+name: bbtools
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+    - samtools==1.9
+    - bbmap==38.86
+    - bwa-mem2==2.2.1
+    - picard==2.26.0
+    - r-base # r-base is sometimes required for picard to run. this isn't listed in the picard dependency list.
+    - openjdk
