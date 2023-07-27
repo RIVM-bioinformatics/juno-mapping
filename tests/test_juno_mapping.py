@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from sys import path
 import unittest
+import vcf
 
 main_script_path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
 path.insert(0, main_script_path)
@@ -15,6 +16,10 @@ def make_non_empty_file(file_path: Path, num_lines: int = 1000) -> None:
     content = "a\n" * num_lines
     with open(file_path, "w") as file_:
         file_.write(content)
+
+def fh(fname, mode='rt'):
+    return open(os.path.join(os.path.dirname(__file__), fname), mode)
+
 
 
 class TestJunoMappingDryRun(unittest.TestCase):
@@ -424,6 +429,21 @@ class TestJunoAssemblyPipeline(unittest.TestCase):
             output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
         )
 
+class test_mutation_calls(unittest.TestCase):
+
+    def test_mutations(self):
+        reader = vcf.Reader(fh('AL123456.3_mutated_1_depth30_AF0.5.vcf'))
+
+        for var in reader:
+            is_snp = var.is_snp
+            if var.POS == 820:
+                self.assertEqual(True, is_snp)
+            if var.POS == 5659:
+                self.assertEqual(False, is_snp)
+            if var.POS == 15162:
+                self.assertEqual(True, is_snp)
+            if var.POS == 46679:
+                self.assertEqual(True, is_snp)
 
 if __name__ == "__main__":
     unittest.main()
