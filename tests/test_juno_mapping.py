@@ -429,21 +429,26 @@ class TestJunoAssemblyPipeline(unittest.TestCase):
             output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
         )
 
+@unittest.skipIf(
+    not Path("test_output/variants/gordonia_s_mutated.vcf").exists(),
+    "Skipped because test output is missing)",
+)
 class test_mutation_calls(unittest.TestCase):
+    """Testing the mutation calling"""
+
+    vcf_dict = {
+        820: {"REF": "T", "ALT": "C"},
+        5659: {"REF": "A", "ALT": "G"},
+        15162: {"REF": "T", "ALT": "A"},
+        46679: {"REF": "C", "ALT": "G"},
+    }
 
     def test_mutations(self):
-        reader = vcf.Reader(fh('AL123456.3_mutated_1_depth30_AF0.5.vcf'))
+        reader = vcf.Reader(fh("test_output/variants/gordonia_s_mutated.vcf"))
 
         for var in reader:
-            is_snp = var.is_snp
-            if var.POS == 820:
-                self.assertEqual(True, is_snp)
-            if var.POS == 5659:
-                self.assertEqual(False, is_snp)
-            if var.POS == 15162:
-                self.assertEqual(True, is_snp)
-            if var.POS == 46679:
-                self.assertEqual(True, is_snp)
+            self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
+            self.assertEqual(self.vcf_dict[var.POS]["ALT"], var.ALT[0])
 
 if __name__ == "__main__":
     unittest.main()
