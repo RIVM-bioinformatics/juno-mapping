@@ -209,7 +209,7 @@ class TestJunoMappingDryRun(unittest.TestCase):
     not Path("/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly").exists(),
     "Skipped in non-RIVM environments (because test data is needed)",
 )
-class TestJunoAssemblyPipeline(unittest.TestCase):
+class TestJunoMappingPipeline(unittest.TestCase):
     """Testing the junoassembly class (code specific for this pipeline)"""
 
     @classmethod
@@ -430,7 +430,7 @@ class TestJunoAssemblyPipeline(unittest.TestCase):
         )
 
 @unittest.skipIf(
-    not Path("test_output/variants/gordonia_s_mutated.vcf").exists(),
+    not Path("pipeline_test_output/variants/gordonia_s_mutated.vcf").exists(),
     "Skipped because test output is missing)",
 )
 class test_mutation_calls(unittest.TestCase):
@@ -444,7 +444,7 @@ class test_mutation_calls(unittest.TestCase):
     }
 
     def test_mutations(self):
-        reader = vcf.Reader(fh("test_output/variants/gordonia_s_mutated.vcf"))
+        reader = vcf.Reader(open("pipeline_test_output/variants/gordonia_s_mutated.vcf"))
 
         for var in reader:
             self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)

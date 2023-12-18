@@ -49,7 +49,7 @@ jobs:
         run: >
           python juno_mapping.py \
             -i tests \
-            -o test_output \
+            -o pipeline_test_output \
             -s mycobacterium_tuberculosis \
             --reference tests/gordonia.fasta \
             --disable-mask \
