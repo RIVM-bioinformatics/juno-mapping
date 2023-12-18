@@ -55,12 +55,12 @@ jobs:
         run: >
           python juno_mapping.py \
             -i tests \
-            -o test_output \ 
-            -s mycobacterium_tuberculosis \ 
-            --reference tests/gordonia.fasta \ 
+            -o test_output \
+            -s mycobacterium_tuberculosis \
+            --reference tests/gordonia.fasta \
             --disable-mask \
             --local \
-            --snakemake-args "cores=1" "nodes=1" \ 
+            --snakemake-args "cores=1" "nodes=1" \
             --db-dir ${{ env.KRAKEN_DEFAULT_DB }}
       - name: Test the python wrapper using juno_mapping.
         shell: bash -l {0}
