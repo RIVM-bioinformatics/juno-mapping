@@ -17,9 +17,9 @@ def make_non_empty_file(file_path: Path, num_lines: int = 1000) -> None:
     with open(file_path, "w") as file_:
         file_.write(content)
 
-def fh(fname, mode='rt'):
-    return open(os.path.join(os.path.dirname(__file__), fname), mode)
 
+def fh(fname, mode="rt"):
+    return open(os.path.join(os.path.dirname(__file__), fname), mode)
 
 
 class TestJunoMappingDryRun(unittest.TestCase):
@@ -429,6 +429,7 @@ class TestJunoMappingPipeline(unittest.TestCase):
             output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
         )
 
+
 @unittest.skipIf(
     not Path("pipeline_test_output/variants/gordonia_s_mutated.vcf").exists(),
     "Skipped because test output is missing)",
@@ -444,11 +445,14 @@ class test_mutation_calls(unittest.TestCase):
     }
 
     def test_mutations(self):
-        reader = vcf.Reader(open("pipeline_test_output/variants/gordonia_s_mutated.vcf"))
+        reader = vcf.Reader(
+            open("pipeline_test_output/variants/gordonia_s_mutated.vcf")
+        )
 
         for var in reader:
             self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
             self.assertEqual(self.vcf_dict[var.POS]["ALT"], var.ALT[0])
+
 
 if __name__ == "__main__":
     unittest.main()
