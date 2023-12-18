@@ -2,7 +2,7 @@
 
 name: Juno_mapping test
 
-on: [push, pull_request]
+on: [pull_request]
 
 env:
   KRAKEN_DEFAULT_DB: ~/kraken-database
