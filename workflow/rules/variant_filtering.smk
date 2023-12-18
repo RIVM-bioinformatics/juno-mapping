@@ -112,8 +112,8 @@ if config["disable_mask"] == "True":
             mem_gb=config["mem_gb"]["filter_variants"],
         shell:
             """
-    cp {input} {output}
-    echo "Masking disabled, copying {input} to {output}" > {log}
+    cp {input.vcf} {output.vcf}
+    echo "Masking disabled, copying {input.vcf} to {output.vcf}" > {log}
             """
 
 else:

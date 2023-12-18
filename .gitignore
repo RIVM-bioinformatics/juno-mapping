@@ -142,3 +142,4 @@ config/juno_call.txt
 core.*
 config/sample_sheet.yaml
 config/user_parameters.yaml
+pipeline_test_output
