@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.1.0...v0.2.0) (2023-12-18)
+
+
+### Features
+
+* test data and unit tests ([234650f](https://github.com/RIVM-bioinformatics/juno-mapping/commit/234650f70ec75f8745ffae59ce5db0b64509f043))
+
+
+### Bug Fixes
+
+* correct syntax when using --disable-mask ([9e1834f](https://github.com/RIVM-bioinformatics/juno-mapping/commit/9e1834ffa768916d6f0973d9cdff3459ce4731ee))
+
 ## 0.1.0 (2023-07-21)
 
 
