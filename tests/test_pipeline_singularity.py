@@ -78,6 +78,8 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
                 "nodes=2",
                 "--db-dir",
                 str(kraken_db),
+                "--prefix",
+                "/home/runner/sing_containers",
             ]
         )
         pipeline.run()
