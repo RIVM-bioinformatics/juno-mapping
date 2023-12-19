@@ -1,0 +1,104 @@
+import argparse
+import os
+import unittest
+from pathlib import Path
+from sys import path
+
+import vcf
+
+from juno_mapping import JunoMapping
+
+
+@unittest.skipIf(
+    (not Path("tests/gordonia_s_mutated_R1.fastq.gz").exists())
+    or (not Path("tests/gordonia_s_mutated_R2.fastq.gz").exists()),
+    "Skipped because test data is missing",
+)
+class TestJunoMappingPipelineSingularity(unittest.TestCase):
+    """Testing the JunoMapping class"""
+
+    reference_sample_dict = {
+        "gordonia_s_mutated": {
+            "R1": str(Path("tests/gordonia_s_mutated_R1.fastq.gz").resolve()),
+            "R2": str(Path("tests/gordonia_s_mutated_R2.fastq.gz").resolve()),
+        }
+    }
+
+    expected_files = [
+        "multiqc/multiqc.html",
+        "audit_trail/log_git.yaml",
+        "audit_trail/log_pipeline.yaml",
+        "audit_trail/log_conda.txt",
+        "audit_trail/snakemake_report.html",
+        "audit_trail/sample_sheet.yaml",
+        "audit_trail/user_parameters.yaml",
+    ]
+
+    vcf_dict = {
+        820: {"REF": "T", "ALT": "C"},
+        5659: {"REF": "A", "ALT": "G"},
+        15162: {"REF": "T", "ALT": "A"},
+        46679: {"REF": "C", "ALT": "G"},
+    }
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        os.system("rm -rf pipeline_test_output_singularity")
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.system("rm -rf pipeline_test_output_singularity")
+
+    def test_junomapping_run_in_singularity(self) -> None:
+        """Testing the pipeline runs properly with real samples"""
+        output_dir = Path("pipeline_test_output_singularity")
+        input_dir = "tests"
+        # Check if running in Github actions
+        if not Path("/home/runner").exists():
+            kraken_db = Path.home().joinpath("kraken-database")
+            assert kraken_db.exists(), "Kraken database not found"
+        else:
+            kraken_db = Path("/home/runner/kraken-database")
+
+        pipeline = JunoMapping(
+            argv=[
+                "-i",
+                input_dir,
+                "-o",
+                str(output_dir),
+                "--species",
+                "mycobacterium_tuberculosis",
+                "--reference",
+                "tests/gordonia.fasta",
+                "--disable-mask",
+                "--local",
+                "--snakemake-args",
+                "cores=1",
+                "nodes=2",
+                "--db-dir",
+                str(kraken_db),
+            ]
+        )
+        pipeline.run()
+
+        self.assertDictEqual(
+            pipeline.sample_dict,
+            self.reference_sample_dict,
+        )
+        for file_ in self.expected_files:
+            self.assertTrue(output_dir.joinpath(file_).exists())
+
+    @unittest.skipIf(
+        not Path(
+            "pipeline_test_output_singularity/variants/gordonia_s_mutated.vcf"
+        ).exists(),
+        "Skipped",
+    )
+    def test_mutations(self):
+        reader = vcf.Reader(
+            open("pipeline_test_output_singularity/variants/gordonia_s_mutated.vcf")
+        )
+
+        for var in reader:
+            self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
+            self.assertEqual(self.vcf_dict[var.POS]["ALT"], var.ALT[0])

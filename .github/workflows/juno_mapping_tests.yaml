@@ -5,7 +5,7 @@ name: Juno_mapping test
 on: [pull_request]
 
 env:
-  KRAKEN_DEFAULT_DB: ~/kraken-database
+  KRAKEN_DEFAULT_DB: /home/runner/kraken-database
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
       matrix:
         config: 
           - {os: ubuntu-latest}
-    name: Testing Juno_mapping ${{ matrix.config.os }}
+    name: Testing Juno_mapping wrapper ${{ matrix.config.os }}
 
     steps:
       - uses: actions/checkout@v2
@@ -44,18 +44,86 @@ jobs:
       - name: Conda list
         shell: bash -l {0}
         run: conda list
-      - name: Run Juno-mapping test
+      - name: Test the juno_mapping wrapper
         shell: bash -l {0}
-        run: >
-          python juno_mapping.py \
-            -i tests \
-            -o pipeline_test_output \
-            -s mycobacterium_tuberculosis \
-            --reference tests/gordonia.fasta \
-            --disable-mask \
-            --local \
-            --snakemake-args "cores=1" "nodes=1" \
-            --db-dir ${{ env.KRAKEN_DEFAULT_DB }}
-      - name: Test the python wrapper using juno_mapping.
+        run: pytest -v tests/test_juno_mapping.py
+
+  singularity_end_to_end:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: 
+          - {os: ubuntu-latest}
+    name: Singularity Juno_mapping pipeline ${{ matrix.config.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: eWaterCycle/setup-singularity@v7
+        with:
+          singularity-version: 3.8.7
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          cache-downloads: true
+          environment-file: envs/juno_mapping.yaml
+      - name: Cache minikraken
+        id: cache-minikraken
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.KRAKEN_DEFAULT_DB }}
+          key: minikraken-${{ runner.os }}
+      - name: Download k2 database
+        if: steps.cache-minikraken.outputs.cache-hit != 'true'
+        run: |
+          mkdir -pv ${{ env.KRAKEN_DEFAULT_DB }}
+          cd ${{ env.KRAKEN_DEFAULT_DB }}
+          curl -k https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20220908.tar.gz > k2_viral_20220908.tar.gz
+          tar zxvf k2_viral_20220908.tar.gz
+          ls -lh
+      - name: Conda list
         shell: bash -l {0}
-        run: python ./tests/test_juno_mapping.py
+        run: conda list
+      - name: Test juno_mapping pipeline using singularity.
+        shell: bash -l {0}
+        run: pytest -v tests/test_pipeline_singularity.py
+
+  conda_end_to_end:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: 
+          - {os: ubuntu-latest}
+    name: Singularity Juno_mapping pipeline ${{ matrix.config.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: eWaterCycle/setup-singularity@v7
+        with:
+          singularity-version: 3.8.7
+      - name: Install Conda environment with Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          cache-downloads: true
+          environment-file: envs/juno_mapping.yaml
+      - name: Cache minikraken
+        id: cache-minikraken
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.KRAKEN_DEFAULT_DB }}
+          key: minikraken-${{ runner.os }}
+      - name: Download k2 database
+        if: steps.cache-minikraken.outputs.cache-hit != 'true'
+        run: |
+          mkdir -pv ${{ env.KRAKEN_DEFAULT_DB }}
+          cd ${{ env.KRAKEN_DEFAULT_DB }}
+          curl -k https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20220908.tar.gz > k2_viral_20220908.tar.gz
+          tar zxvf k2_viral_20220908.tar.gz
+          ls -lh
+      - name: Conda list
+        shell: bash -l {0}
+        run: conda list
+      - name: Test juno_mapping pipeline using conda.
+        shell: bash -l {0}
+        run: pytest -v tests/test_pipeline_conda.py
