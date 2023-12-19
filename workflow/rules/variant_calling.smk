@@ -5,6 +5,7 @@ rule Mutect2:
         ref=OUT + "/reference/reference.fasta",
         ref_gatk_index=OUT + "/reference/reference.dict",
         ref_samtools_index=OUT + "/reference/reference.fasta.fai",
+        ref_bwa_index=OUT + "/reference/reference.fasta.sa",
     output:
         vcf=OUT + "/variants_raw/raw/{sample}.vcf",
         stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
@@ -12,7 +13,7 @@ rule Mutect2:
         dangling_bases=1,
         annotations="--annotation StrandBiasBySample --annotation AlleleFraction",
     container:
-        "docker://broadinstitute/gatk:4.3.0.0"
+        "docker://broadinstitute/gatk:4.5.0.0"
     conda:
         "../envs/gatk_picard.yaml"
     threads: 4

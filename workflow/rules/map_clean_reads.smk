@@ -77,9 +77,8 @@ samtools faidx {input} 2>&1>{log}
         """
 
 
-rule bwa_mem:
+rule minimap2:
     input:
-        ref_index=OUT + "/reference/reference.fasta.sa",
         ref=OUT + "/reference/reference.fasta",
         r1=OUT + "/clean_fastq/{sample}_pR1.fastq.gz",
         r2=OUT + "/clean_fastq/{sample}_pR2.fastq.gz",
@@ -95,7 +94,7 @@ rule bwa_mem:
     conda:
         "../envs/bwa_samtools.yaml"
     container:
-        "docker://staphb/bwa:0.7.17"
+        "docker://staphb/minimap2:2.21"
     log:
         OUT + "/log/bwa_mem/{sample}.log",
     threads: config["threads"]["bwa"]
@@ -103,9 +102,10 @@ rule bwa_mem:
         mem_gb=config["mem_gb"]["bwa"],
     shell:
         """
-bwa mem \
+minimap2 \
+-x sr \
+-a \
 -K {params.bases_per_batch} \
--v {params.verbosity} \
 -t {threads} \
 {params.softclip_supp_aln} \
 -R {params.rgid} \
