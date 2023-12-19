@@ -102,27 +102,6 @@ H={output.pdf} 2>&1>{log}
         """
 
 
-# rule samtools_stats:
-#     input:
-#         bam = OUT + "/mapped_reads/duprem/{sample}.bam",
-#     output:
-#         stats = OUT + "/qc_mapping/samtools_stats/{sample}.txt"
-#     container:
-#         "docker://staphb/samtools:1.17"
-#     conda:
-#         "../envs/gatk_picard.yaml"
-#     log:
-#         OUT + "/log/samtools_stats/{sample}.log"
-#     threads:
-#         config["threads"]["samtools"]
-#     resources:
-#         mem_gb = config["mem_gb"]["samtools"]
-#     shell:
-#         """
-# samtools stats {input} > {output} 2>{log}
-#         """
-
-
 rule CollectAlignmentSummaryMetrics:
     input:
         bam=OUT + "/mapped_reads/duprem/{sample}.bam",

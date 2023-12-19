@@ -65,7 +65,7 @@ rule multiqc:
         OUT + "/log/multiqc/multiqc.log",
     shell:
         """
-        multiqc --interactive --force --config {params.config_file} \
-            -o {params.output_dir} \
-            -n multiqc.html {input} &> {log}
+multiqc --interactive --force --config {params.config_file} \
+    -o {params.output_dir} \
+    -n multiqc.html {input} &> {log}
         """

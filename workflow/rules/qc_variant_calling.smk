@@ -46,7 +46,11 @@ rule combine_filter_status:
         mem_gb=config["mem_gb"]["other"],
     shell:
         """
-python workflow/scripts/combine_variant_tables.py --input {input.tsv} --output {output} --fields FILTER --mqc {input.header}
+python workflow/scripts/combine_variant_tables.py \
+--input {input.tsv} \
+--output {output} \
+--fields FILTER \
+--mqc {input.header}
         """
 
 

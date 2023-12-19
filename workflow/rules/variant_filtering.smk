@@ -112,8 +112,8 @@ if config["disable_mask"] == "True":
             mem_gb=config["mem_gb"]["filter_variants"],
         shell:
             """
-    cp {input.vcf} {output.vcf}
-    echo "Masking disabled, copying {input.vcf} to {output.vcf}" > {log}
+cp {input.vcf} {output.vcf}
+echo "Masking disabled, copying {input.vcf} to {output.vcf}" > {log}
             """
 
 else:
@@ -151,12 +151,12 @@ else:
             mem_gb=config["mem_gb"]["filter_variants"],
         shell:
             """
-    bcftools filter \
-    --mask-file {input.mask} \
-    --soft-filter "masked_region" \
-    {input.vcf} \
-    1>{output.vcf} \
-    2>{log}
+bcftools filter \
+--mask-file {input.mask} \
+--soft-filter "masked_region" \
+{input.vcf} \
+1>{output.vcf} \
+2>{log}
             """
 
 
