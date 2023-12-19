@@ -46,12 +46,25 @@ jobs:
         run: conda list
       - name: check space
         shell: bash -l {0}
-        run: df -h .
+        run: | 
+          df -h .
+          if [ -d /home/runner ]; then
+            sudo rm -rf /usr/share/dotnet
+            sudo rm -rf /opt/ghc
+            sudo rm -rf "/usr/local/share/boost"
+            sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          fi
+          df -h .
       - name: Test juno_mapping pipeline using singularity.
         shell: bash -l {0}
         run: pytest -v tests/test_pipeline_singularity.py
       - name: Test the juno_mapping wrapper
         shell: bash -l {0}
         run: pytest -v tests/test_juno_mapping.py
+      - name: check space 2
+        if: always()
+        shell: bash -l {0}
+        run: | 
+          df -h .
 
   
