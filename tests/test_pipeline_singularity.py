@@ -59,9 +59,11 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
         # Check if running in Github actions
         if not Path("/home/runner").exists():
             kraken_db = Path.home().joinpath("kraken-database")
+            sing_prefix = Path.home().joinpath("sing_containers")
             assert kraken_db.exists(), "Kraken database not found"
         else:
             kraken_db = Path("/home/runner/kraken-database")
+            sing_prefix = Path("/home/runner/sing_containers")
 
         pipeline = JunoMapping(
             argv=[
@@ -81,7 +83,7 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
                 "--db-dir",
                 str(kraken_db),
                 "--prefix",
-                "/home/runner/sing_containers",
+                str(sing_prefix),
             ]
         )
         pipeline.run()
