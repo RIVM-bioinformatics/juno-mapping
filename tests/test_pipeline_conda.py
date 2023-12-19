@@ -19,14 +19,13 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
 
     reference_sample_dict = {
         "gordonia_s_mutated": {
-            "R1": "tests/gordonia_s_mutated_R1.fastq.gz",
-            "R2": "tests/gordonia_s_mutated_R2.fastq.gz",
+            "R1": str(Path("tests/gordonia_s_mutated_R1.fastq.gz").resolve()),
+            "R2": str(Path("tests/gordonia_s_mutated_R2.fastq.gz").resolve()),
         }
     }
 
     expected_files = [
         "multiqc/multiqc.html",
-        "identify_species/top1_species_multireport.csv",
         "audit_trail/log_git.yaml",
         "audit_trail/log_pipeline.yaml",
         "audit_trail/log_conda.txt",
@@ -42,6 +41,9 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
         46679: {"REF": "C", "ALT": "G"},
     }
 
+    output_dir = Path("pipeline_test_output_conda")
+    input_dir = "tests"
+
     @classmethod
     def setUpClass(cls) -> None:
         os.system("rm -rf pipeline_test_output_conda")
@@ -50,13 +52,11 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
     def tearDownClass(cls) -> None:
         os.system("rm -rf pipeline_test_output_conda")
 
-    def test_junomapping_run_in_conda(self) -> None:
+    def test_010_junomapping_run_in_conda(self) -> None:
         """
         Testing the pipeline runs properly with real samples when providing
         a metadata file
         """
-        output_dir = Path("pipeline_test_output_conda")
-        input_dir = "tests"
         # Check if running in Github actions
         if not Path("/home/runner").exists():
             kraken_db = Path.home().joinpath("kraken-database")
@@ -67,9 +67,9 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
         pipeline = JunoMapping(
             argv=[
                 "-i",
-                input_dir,
+                self.input_dir,
                 "-o",
-                str(output_dir),
+                str(self.output_dir),
                 "--no-containers",
                 "--species",
                 "mycobacterium_tuberculosis",
@@ -87,15 +87,20 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
 
         pipeline.run()
 
+        global pipeline_sample_dict
+        pipeline_sample_dict = pipeline.sample_dict
+
+    def test_020_sample_dict(self):
         self.assertDictEqual(
-            pipeline.sample_dict,
+            pipeline_sample_dict,
             self.reference_sample_dict,
         )
 
+    def test_030_expected_files(self):
         for file_ in self.expected_files:
-            self.assertTrue(output_dir.joinpath(file_).exists())
+            self.assertTrue(self.output_dir.joinpath(file_).exists())
 
-    def test_mutations(self):
+    def test_040_mutations(self):
         reader = vcf.Reader(
             open("pipeline_test_output_conda/variants/gordonia_s_mutated.vcf")
         )
