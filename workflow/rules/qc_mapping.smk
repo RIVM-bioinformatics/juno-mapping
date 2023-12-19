@@ -88,7 +88,14 @@ rule get_insert_size:
         mem_gb=config["mem_gb"]["picard"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectInsertSizeMetrics \
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectInsertSizeMetrics \
 I={input.bam} \
 O={output.txt} \
 H={output.pdf} 2>&1>{log}
@@ -126,7 +133,14 @@ rule CollectAlignmentSummaryMetrics:
         "docker://broadinstitute/picard:2.27.5"
     shell:
         """
-java -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
         """
 
 
@@ -142,7 +156,14 @@ rule CollectGcBiasMetrics:
         "docker://broadinstitute/picard:2.27.5"
     shell:
         """
-java -jar /usr/picard/picard.jar CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
         """
 
 
@@ -155,7 +176,14 @@ rule CollectQualityYieldMetrics:
         "docker://broadinstitute/picard:2.27.5"
     shell:
         """
-java -jar /usr/picard/picard.jar CollectQualityYieldMetrics -I {input.bam} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectQualityYieldMetrics -I {input.bam} -O {output}
         """
 
 
@@ -169,5 +197,12 @@ rule CollectWgsMetrics:
         "docker://broadinstitute/picard:2.27.5"
     shell:
         """
-java -jar /usr/picard/picard.jar CollectWgsMetrics -I {input.bam} -R {input.ref} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectWgsMetrics -I {input.bam} -R {input.ref} -O {output}
         """
