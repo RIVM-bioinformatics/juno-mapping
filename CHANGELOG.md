@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.1](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.2.0...v0.2.1) (2023-12-19)
+
+
+### Bug Fixes
+
+* conda compatibility of picard ([6803b0c](https://github.com/RIVM-bioinformatics/juno-mapping/commit/6803b0c943320936999ad5fd895284d680c7f4d1))
+
+
+### Dependencies
+
+* add conda envs ([bb1134a](https://github.com/RIVM-bioinformatics/juno-mapping/commit/bb1134abbdbb527bc606833ab7dbbd989a7bf51a))
+* bump multiqc ([94eff56](https://github.com/RIVM-bioinformatics/juno-mapping/commit/94eff564a0e93bfa9b7b78f71827e8dfc157e21a))
+* channel reorder ([7564701](https://github.com/RIVM-bioinformatics/juno-mapping/commit/75647010092f41abefd608d759bdc1a530b8c386))
+* reorder channels ([293ef1b](https://github.com/RIVM-bioinformatics/juno-mapping/commit/293ef1b155a8df6afe8d71b148a245bbf6b79368))
+* reorder channels for openssl bug ([fb8a21f](https://github.com/RIVM-bioinformatics/juno-mapping/commit/fb8a21f941925b1695832ec747a0374186dd54d8))
+* set nodefaults for conda envs ([f662649](https://github.com/RIVM-bioinformatics/juno-mapping/commit/f66264991de330f3c702677d3f0cd26d6f5eceab))
+
 ## [0.2.0](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.1.0...v0.2.0) (2023-12-18)
 
 
