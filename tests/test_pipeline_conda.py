@@ -45,12 +45,12 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
     input_dir = "tests"
 
     @classmethod
-    def setUpClass(cls) -> None:
-        os.system("rm -rf pipeline_test_output_conda")
+    def setUpClass(cls, output_dir=output_dir) -> None:
+        os.system(f"rm -rf {output_dir}")
 
     @classmethod
-    def tearDownClass(cls) -> None:
-        os.system("rm -rf pipeline_test_output_conda")
+    def tearDownClass(cls, output_dir=output_dir) -> None:
+        os.system(f"rm -rf {output_dir}")
 
     def test_010_junomapping_run_in_conda(self) -> None:
         """
@@ -101,9 +101,7 @@ class TestJunoMappingPipelineConda(unittest.TestCase):
             self.assertTrue(self.output_dir.joinpath(file_).exists())
 
     def test_040_mutations(self):
-        reader = vcf.Reader(
-            open("pipeline_test_output_conda/variants/gordonia_s_mutated.vcf")
-        )
+        reader = vcf.Reader(open(f"{self.output_dir}/variants/gordonia_s_mutated.vcf"))
 
         for var in reader:
             self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
