@@ -22,22 +22,21 @@ rule identify_species_reads:
         mem_gb=config["mem_gb"]["kraken2"],
     shell:
         """
-        # Adding --confidence 0.05 causes 0 kmers assigned to species in some samples
-        # That breaks bracken
-        kraken2 --db {params.kraken_db} \
-            --threads {threads} \
-            --report {output.kraken2_kreport} \
-            --gzip-compressed \
-            --paired \
-            {input.r1} {input.r2}  &> {log} 
+# Adding --confidence 0.05 causes 0 kmers assigned to species in some samples
+# That breaks bracken
+kraken2 --db {params.kraken_db} \
+    --threads {threads} \
+    --report {output.kraken2_kreport} \
+    --gzip-compressed \
+    --paired \
+    {input.r1} {input.r2}  &> {log} 
 
-        bracken -d {params.kraken_db} \
-            -i {output.kraken2_kreport} \
-            -o {output.bracken_s} \
-            -r 150 \
-            -l S \
-            -t 0  &>> {log} 
-
+bracken -d {params.kraken_db} \
+    -i {output.kraken2_kreport} \
+    -o {output.bracken_s} \
+    -r 150 \
+    -l S \
+    -t 0  &>> {log} 
         """
 
 
@@ -65,20 +64,19 @@ rule identify_species:
         mem_gb=config["mem_gb"]["kraken2"],
     shell:
         """
-        # Adding --confidence 0.05 causes 0 kmers assigned to species in some samples
-        # That breaks bracken
-        kraken2 --db {params.kraken_db} \
-            --threads {threads} \
-            --report {output.kraken2_kreport} \
-            {input}  &> {log} 
+# Adding --confidence 0.05 causes 0 kmers assigned to species in some samples
+# That breaks bracken
+kraken2 --db {params.kraken_db} \
+    --threads {threads} \
+    --report {output.kraken2_kreport} \
+    {input}  &> {log} 
 
-        bracken -d {params.kraken_db} \
-            -i {output.kraken2_kreport} \
-            -o {output.bracken_s} \
-            -r 150 \
-            -l S \
-            -t 0  &>> {log} 
-
+bracken -d {params.kraken_db} \
+    -i {output.kraken2_kreport} \
+    -o {output.bracken_s} \
+    -r 150 \
+    -l S \
+    -t 0  &>> {log} 
         """
 
 
@@ -99,6 +97,7 @@ rule top_species_multireport:
         mem_gb=config["mem_gb"]["other"],
     shell:
         """
-        python workflow/scripts/make_summary_main_species.py --input-files {input} \
-                                                --output-multireport {output} > {log}
+python workflow/scripts/make_summary_main_species.py \
+--input-files {input} \
+--output-multireport {output} > {log}
         """

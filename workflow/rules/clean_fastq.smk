@@ -24,20 +24,20 @@ rule clean_fastq:
         min_length=config["min_read_length"],
     shell:
         """
-        fastp --in1 {input[0]} \
-            --in2 {input[1]} \
-            --out1 {output.r1} \
-            --out2 {output.r2} \
-            --unpaired1 {output.unpaired} \
-            --unpaired2 {output.unpaired} \
-            --html {output.html} \
-            --json {output.json} \
-            --report_title "FastP report for sample {wildcards.sample}" \
-            --detect_adapter_for_pe \
-            --thread {threads} \
-            --cut_right \
-            --cut_window_size {params.window_size} \
-            --cut_mean_quality {params.mean_quality} \
-            --correction \
-            --length_required {params.min_length} > {log} 2>&1
+fastp --in1 {input[0]} \
+    --in2 {input[1]} \
+    --out1 {output.r1} \
+    --out2 {output.r2} \
+    --unpaired1 {output.unpaired} \
+    --unpaired2 {output.unpaired} \
+    --html {output.html} \
+    --json {output.json} \
+    --report_title "FastP report for sample {wildcards.sample}" \
+    --detect_adapter_for_pe \
+    --thread {threads} \
+    --cut_right \
+    --cut_window_size {params.window_size} \
+    --cut_mean_quality {params.mean_quality} \
+    --correction \
+    --length_required {params.min_length} > {log} 2>&1
         """

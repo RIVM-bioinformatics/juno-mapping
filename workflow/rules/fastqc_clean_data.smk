@@ -24,10 +24,10 @@ rule qc_clean_fastq:
         output_dir=OUT + "/qc_clean_fastq/",
     shell:
         """
-        if [ -s {input} ]
-        then
-            fastqc --quiet --outdir {params.output_dir} {input} >> {log} 
-        else  
-            touch {output}
-        fi
+if [ -s {input} ]
+then
+    fastqc --quiet --outdir {params.output_dir} {input} >> {log} 
+else  
+    touch {output}
+fi
         """

@@ -83,37 +83,25 @@ rule get_insert_size:
         "docker://broadinstitute/picard:2.27.5"
     log:
         OUT + "/log/get_insert_size/{sample}.log",
+    params:
+        use_singularity=config["use_singularity"],
     threads: config["threads"]["picard"]
     resources:
         mem_gb=config["mem_gb"]["picard"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectInsertSizeMetrics \
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectInsertSizeMetrics \
 I={input.bam} \
 O={output.txt} \
 H={output.pdf} 2>&1>{log}
         """
-
-
-# rule samtools_stats:
-#     input:
-#         bam = OUT + "/mapped_reads/duprem/{sample}.bam",
-#     output:
-#         stats = OUT + "/qc_mapping/samtools_stats/{sample}.txt"
-#     container:
-#         "docker://staphb/samtools:1.17"
-#     conda:
-#         "../envs/gatk_picard.yaml"
-#     log:
-#         OUT + "/log/samtools_stats/{sample}.log"
-#     threads:
-#         config["threads"]["samtools"]
-#     resources:
-#         mem_gb = config["mem_gb"]["samtools"]
-#     shell:
-#         """
-# samtools stats {input} > {output} 2>{log}
-#         """
 
 
 rule CollectAlignmentSummaryMetrics:
@@ -122,11 +110,22 @@ rule CollectAlignmentSummaryMetrics:
         ref=OUT + "/reference/reference.fasta",
     output:
         txt=OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectAlignmentSummaryMetrics -I {input.bam} -R {input.ref} -O {output}
         """
 
 
@@ -138,11 +137,22 @@ rule CollectGcBiasMetrics:
         txt=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
         pdf=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.pdf",
         summary=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.summary.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectGcBiasMetrics -I {input.bam} -R {input.ref} -O {output.txt} --CHART_OUTPUT {output.pdf} --SUMMARY_OUTPUT {output.summary}
         """
 
 
@@ -151,11 +161,22 @@ rule CollectQualityYieldMetrics:
         bam=OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
         txt=OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectQualityYieldMetrics -I {input.bam} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectQualityYieldMetrics -I {input.bam} -O {output}
         """
 
 
@@ -165,9 +186,20 @@ rule CollectWgsMetrics:
         ref=OUT + "/reference/reference.fasta",
     output:
         txt=OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
-java -jar /usr/picard/picard.jar CollectWgsMetrics -I {input.bam} -R {input.ref} -O {output}
+if [ {params.use_singularity} == True ]
+then
+    EXEC=\"java -jar /usr/picard/picard.jar\"
+else
+    EXEC=picard
+fi
+
+$EXEC CollectWgsMetrics -I {input.bam} -R {input.ref} -O {output}
         """

@@ -1,14 +1,11 @@
-import argparse
+# type: ignore
 
-import csv
+import argparse
 import os
+import unittest
 from pathlib import Path
 from sys import path
-import unittest
-import vcf
 
-main_script_path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
-path.insert(0, main_script_path)
 from juno_mapping import JunoMapping
 
 
@@ -16,10 +13,6 @@ def make_non_empty_file(file_path: Path, num_lines: int = 1000) -> None:
     content = "a\n" * num_lines
     with open(file_path, "w") as file_:
         file_.write(content)
-
-
-def fh(fname, mode="rt"):
-    return open(os.path.join(os.path.dirname(__file__), fname), mode)
 
 
 class TestJunoMappingDryRun(unittest.TestCase):
@@ -43,15 +36,6 @@ class TestJunoMappingDryRun(unittest.TestCase):
             Path(folder).mkdir(exist_ok=True)
         for file_ in fake_files:
             make_non_empty_file(file_)
-
-        # with open("fake_dir_wsamples/fake_metadata.csv", mode="w") as metadata_file:
-        #     metadata_writer = csv.writer(
-        #         metadata_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
-        #     )
-        #     metadata_writer.writerow(["sample", "genus", "species"])
-        #     metadata_writer.writerow(["sample1", "Mycobacterium", "tuberculosis"])
-        #     metadata_writer.writerow(["sample2", "Streptococcus", "pyogenes"])
-        #     metadata_writer.writerow(["1234", "Mycobacterium", "tuberculosis"])
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -203,255 +187,6 @@ class TestJunoMappingDryRun(unittest.TestCase):
             )
             pipeline.parser.exit_on_error = False  # type: ignore
             pipeline.setup()
-
-
-@unittest.skipIf(
-    not Path("/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly").exists(),
-    "Skipped in non-RIVM environments (because test data is needed)",
-)
-class TestJunoMappingPipeline(unittest.TestCase):
-    """Testing the junoassembly class (code specific for this pipeline)"""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        os.system("rm -rf test_output")
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        os.system("rm -rf test_output")
-        os.system("rm -rf test_output_sing")
-        os.system("rm -rf test_output_sing_prefix")
-        os.system("rm -rf sing_containers")
-
-    def test_junoassembly_run_wMetadata_in_conda(self) -> None:
-        """
-        Testing the pipeline runs properly with real samples when providing
-        a metadata file
-        """
-        output_dir = Path("test_output")
-        input_dir = "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly"
-        metadata_file = (
-            "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/metadata.csv"
-        )
-        pipeline = JunoMapping(
-            argv=[
-                "-i",
-                input_dir,
-                "-o",
-                str(output_dir),
-                "-m",
-                metadata_file,
-                "--no-containers",
-            ]
-        )
-
-        pipeline.run()
-        expected_sample_sheet = {
-            "sample1": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R2_001.fastq.gz",
-                "genus": "salmonella",
-            },
-            "sample2": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R2.fastq.gz",
-                "genus": "escherichia",
-            },
-            "sample3": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R2_001.fastq.gz",
-                "genus": "streptococcus",
-            },
-            "sample4": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R2.fastq.gz",
-                "genus": "shigella",
-            },
-        }
-
-        self.assertDictEqual(
-            pipeline.sample_dict,
-            expected_sample_sheet,
-            pipeline.sample_dict,
-        )
-        self.assertTrue(output_dir.joinpath("multiqc", "multiqc.html").exists())
-        self.assertTrue(
-            output_dir.joinpath(
-                "identify_species", "top1_species_multireport.csv"
-            ).exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_git.yaml").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "log_pipeline.yaml").exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_conda.txt").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "snakemake_report.html").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "sample_sheet.yaml").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
-        )
-
-    def test_junoassembly_run_in_singularity(self) -> None:
-        """Testing the pipeline runs properly with real samples when providing
-        a metadata file
-        """
-        output_dir = Path("test_output_sing")
-        input_dir = "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly"
-
-        pipeline = JunoMapping(
-            argv=[
-                "-i",
-                input_dir,
-                "-o",
-                str(output_dir),
-            ]
-        )
-        pipeline.run()
-
-        expected_sample_sheet = {
-            "sample1": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R2_001.fastq.gz",
-                "genus": None,
-            },
-            "sample2": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R2.fastq.gz",
-                "genus": None,
-            },
-            "sample3": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R2_001.fastq.gz",
-                "genus": None,
-            },
-            "sample4": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R2.fastq.gz",
-                "genus": None,
-            },
-        }
-
-        self.assertEqual(
-            pipeline.sample_dict,
-            expected_sample_sheet,
-            pipeline.sample_dict,
-        )
-        self.assertTrue(output_dir.joinpath("multiqc", "multiqc.html").exists())
-        self.assertTrue(
-            output_dir.joinpath(
-                "identify_species", "top1_species_multireport.csv"
-            ).exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_git.yaml").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "log_pipeline.yaml").exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_conda.txt").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "snakemake_report.html").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "sample_sheet.yaml").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
-        )
-
-    def test_junoassembly_wsingularity_prefix(self) -> None:
-        """Testing the pipeline runs properly with real samples when providing
-        a metadata file
-        """
-        output_dir = Path("test_output_sing_prefix")
-        input_dir = "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly"
-
-        pipeline = JunoMapping(
-            argv=[
-                "-i",
-                input_dir,
-                "-o",
-                str(output_dir),
-                "--prefix",
-                "sing_containers",
-            ]
-        )
-        pipeline.run()
-
-        expected_sample_sheet = {
-            "sample1": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample1_S14_R2_001.fastq.gz",
-                "genus": None,
-            },
-            "sample2": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample2_R2.fastq.gz",
-                "genus": None,
-            },
-            "sample3": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R1_001.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample3_R2_001.fastq.gz",
-                "genus": None,
-            },
-            "sample4": {
-                "R1": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R1.fastq.gz",
-                "R2": "/data/BioGrid/hernanda/test_data_per_pipeline/Juno_assembly/sample4_R2.fastq.gz",
-                "genus": None,
-            },
-        }
-
-        self.assertEqual(
-            pipeline.sample_dict,
-            expected_sample_sheet,
-            pipeline.sample_dict,
-        )
-        self.assertTrue(output_dir.joinpath("multiqc", "multiqc.html").exists())
-        self.assertTrue(
-            output_dir.joinpath(
-                "identify_species", "top1_species_multireport.csv"
-            ).exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_git.yaml").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "log_pipeline.yaml").exists()
-        )
-        self.assertTrue(output_dir.joinpath("audit_trail", "log_conda.txt").exists())
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "snakemake_report.html").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "sample_sheet.yaml").exists()
-        )
-        self.assertTrue(
-            output_dir.joinpath("audit_trail", "user_parameters.yaml").exists()
-        )
-
-
-@unittest.skipIf(
-    not Path("pipeline_test_output/variants/gordonia_s_mutated.vcf").exists(),
-    "Skipped because test output is missing)",
-)
-class test_mutation_calls(unittest.TestCase):
-    """Testing the mutation calling"""
-
-    vcf_dict = {
-        820: {"REF": "T", "ALT": "C"},
-        5659: {"REF": "A", "ALT": "G"},
-        15162: {"REF": "T", "ALT": "A"},
-        46679: {"REF": "C", "ALT": "G"},
-    }
-
-    def test_mutations(self):
-        reader = vcf.Reader(
-            open("pipeline_test_output/variants/gordonia_s_mutated.vcf")
-        )
-
-        for var in reader:
-            self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
-            self.assertEqual(self.vcf_dict[var.POS]["ALT"], var.ALT[0])
 
 
 if __name__ == "__main__":

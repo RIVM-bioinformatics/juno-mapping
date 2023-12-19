@@ -54,7 +54,7 @@ rule multiqc:
     conda:
         "../envs/multiqc.yaml"
     container:
-        "docker://quay.io/biocontainers/multiqc:1.11--pyhdfd78af_0"
+        "docker://quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0"
     threads: config["threads"]["multiqc"]
     resources:
         mem_gb=config["mem_gb"]["multiqc"],
@@ -65,7 +65,7 @@ rule multiqc:
         OUT + "/log/multiqc/multiqc.log",
     shell:
         """
-        multiqc --interactive --force --config {params.config_file} \
-            -o {params.output_dir} \
-            -n multiqc.html {input} &> {log}
+multiqc --interactive --force --config {params.config_file} \
+    -o {params.output_dir} \
+    -n multiqc.html {input} &> {log}
         """

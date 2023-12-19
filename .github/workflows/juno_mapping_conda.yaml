@@ -1,21 +1,21 @@
 # Testing for pipeline python wrapper and scripts used inside rules
 
-name: Juno_mapping test
+name: Conda e2e test
 
 on: [pull_request]
 
 env:
-  KRAKEN_DEFAULT_DB: ~/kraken-database
+  KRAKEN_DEFAULT_DB: /home/runner/kraken-database
 
 jobs:
-  build:
+  conda_end_to_end:
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
         config: 
           - {os: ubuntu-latest}
-    name: Testing Juno_mapping ${{ matrix.config.os }}
+    name: Conda Juno_mapping pipeline ${{ matrix.config.os }}
 
     steps:
       - uses: actions/checkout@v2
@@ -44,18 +44,6 @@ jobs:
       - name: Conda list
         shell: bash -l {0}
         run: conda list
-      - name: Run Juno-mapping test
+      - name: Test juno_mapping pipeline using conda.
         shell: bash -l {0}
-        run: >
-          python juno_mapping.py \
-            -i tests \
-            -o pipeline_test_output \
-            -s mycobacterium_tuberculosis \
-            --reference tests/gordonia.fasta \
-            --disable-mask \
-            --local \
-            --snakemake-args "cores=1" "nodes=1" \
-            --db-dir ${{ env.KRAKEN_DEFAULT_DB }}
-      - name: Test the python wrapper using juno_mapping.
-        shell: bash -l {0}
-        run: python ./tests/test_juno_mapping.py
+        run: pytest -v tests/test_pipeline_conda.py
