@@ -1,6 +1,6 @@
 # Testing for pipeline python wrapper and scripts used inside rules
 
-name: Juno_mapping test
+name: Singularity e2e test
 
 on: [pull_request]
 
@@ -44,6 +44,9 @@ jobs:
       - name: Conda list
         shell: bash -l {0}
         run: conda list
+      - name: check space
+        shell: bash -l {0}
+        run: df -h .
       - name: Test juno_mapping pipeline using singularity.
         shell: bash -l {0}
         run: pytest -v tests/test_pipeline_singularity.py

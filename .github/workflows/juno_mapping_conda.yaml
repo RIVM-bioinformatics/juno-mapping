@@ -1,6 +1,6 @@
 # Testing for pipeline python wrapper and scripts used inside rules
 
-name: Juno_mapping test
+name: Conda e2e test
 
 on: [pull_request]
 
@@ -15,7 +15,7 @@ jobs:
       matrix:
         config: 
           - {os: ubuntu-latest}
-    name: Singularity Juno_mapping pipeline ${{ matrix.config.os }}
+    name: Conda Juno_mapping pipeline ${{ matrix.config.os }}
 
     steps:
       - uses: actions/checkout@v2
