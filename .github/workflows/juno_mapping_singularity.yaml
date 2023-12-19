@@ -46,7 +46,9 @@ jobs:
         run: conda list
       - name: check space
         shell: bash -l {0}
-        run: | 
+        run: |
+          which singularity
+          singularity --version
           df -h .
           if [ -d /home/runner ]; then
             sudo rm -rf /usr/share/dotnet
@@ -55,6 +57,8 @@ jobs:
             sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           fi
           df -h .
+          which singularity
+          singularity --version
       - name: Test juno_mapping pipeline using singularity.
         shell: bash -l {0}
         run: pytest -v tests/test_pipeline_singularity.py
