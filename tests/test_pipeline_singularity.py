@@ -41,18 +41,19 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
         46679: {"REF": "C", "ALT": "G"},
     }
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        os.system("rm -rf pipeline_test_output_singularity")
+    output_dir = Path("pipeline_test_output_singularity")
+    input_dir = "tests"
 
     @classmethod
-    def tearDownClass(cls) -> None:
-        os.system("rm -rf pipeline_test_output_singularity")
+    def setUpClass(cls, output_dir=output_dir) -> None:
+        os.system(f"rm -rf {output_dir}")
 
-    def test_junomapping_run_in_singularity(self) -> None:
+    @classmethod
+    def tearDownClass(cls, output_dir=output_dir) -> None:
+        os.system(f"rm -rf {output_dir}")
+
+    def test_010_junomapping_run_in_singularity(self) -> None:
         """Testing the pipeline runs properly with real samples"""
-        output_dir = Path("pipeline_test_output_singularity")
-        input_dir = "tests"
         # Check if running in Github actions
         if not Path("/home/runner").exists():
             kraken_db = Path.home().joinpath("kraken-database")
@@ -63,9 +64,9 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
         pipeline = JunoMapping(
             argv=[
                 "-i",
-                input_dir,
+                self.input_dir,
                 "-o",
-                str(output_dir),
+                str(self.output_dir),
                 "--species",
                 "mycobacterium_tuberculosis",
                 "--reference",
@@ -81,23 +82,21 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
         )
         pipeline.run()
 
+        global pipeline_sample_dict
+        pipeline_sample_dict = pipeline.sample_dict
+
+    def test_020_sample_dict(self):
         self.assertDictEqual(
-            pipeline.sample_dict,
+            pipeline_sample_dict,
             self.reference_sample_dict,
         )
-        for file_ in self.expected_files:
-            self.assertTrue(output_dir.joinpath(file_).exists())
 
-    @unittest.skipIf(
-        not Path(
-            "pipeline_test_output_singularity/variants/gordonia_s_mutated.vcf"
-        ).exists(),
-        "Skipped",
-    )
-    def test_mutations(self):
-        reader = vcf.Reader(
-            open("pipeline_test_output_singularity/variants/gordonia_s_mutated.vcf")
-        )
+    def test_030_expected_files(self):
+        for file_ in self.expected_files:
+            self.assertTrue(self.output_dir.joinpath(file_).exists())
+
+    def test_040_mutations(self):
+        reader = vcf.Reader(open(f"{self.output_dir}/variants/gordonia_s_mutated.vcf"))
 
         for var in reader:
             self.assertEqual(self.vcf_dict[var.POS]["REF"], var.REF)
