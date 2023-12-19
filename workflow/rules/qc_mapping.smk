@@ -83,6 +83,8 @@ rule get_insert_size:
         "docker://broadinstitute/picard:2.27.5"
     log:
         OUT + "/log/get_insert_size/{sample}.log",
+    params:
+        use_singularity=config["use_singularity"],
     threads: config["threads"]["picard"]
     resources:
         mem_gb=config["mem_gb"]["picard"],
@@ -108,8 +110,12 @@ rule CollectAlignmentSummaryMetrics:
         ref=OUT + "/reference/reference.fasta",
     output:
         txt=OUT + "/qc_mapping/CollectAlignmentSummaryMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -131,8 +137,12 @@ rule CollectGcBiasMetrics:
         txt=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.txt",
         pdf=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.pdf",
         summary=OUT + "/qc_mapping/CollectGcBiasMetrics/{sample}.summary.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -151,8 +161,12 @@ rule CollectQualityYieldMetrics:
         bam=OUT + "/mapped_reads/duprem/{sample}.bam",
     output:
         txt=OUT + "/qc_mapping/CollectQualityYieldMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -172,8 +186,12 @@ rule CollectWgsMetrics:
         ref=OUT + "/reference/reference.fasta",
     output:
         txt=OUT + "/qc_mapping/CollectWgsMetrics/{sample}.txt",
+    conda:
+        "../envs/gatk_picard.yaml"
     container:
         "docker://broadinstitute/picard:2.27.5"
+    params:
+        use_singularity=config["use_singularity"],
     shell:
         """
 if [ {params.use_singularity} == True ]
