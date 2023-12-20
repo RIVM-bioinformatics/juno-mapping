@@ -2,7 +2,9 @@
 
 name: Conda e2e test
 
-on: [pull_request]
+on:
+  workflow_dispatch:
+  pull_request:
 
 env:
   KRAKEN_DEFAULT_DB: /home/runner/kraken-database
