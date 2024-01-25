@@ -7,15 +7,17 @@ Department: Infektieziekteonderzoek, Diagnostiek en Laboratorium
 Date: 25-05-2023   
 """
 
-from pathlib import Path
-import pathlib
-import yaml
 import argparse
+import pathlib
 import sys
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Callable, Optional, Union
+
+import yaml
 from juno_library import Pipeline
-from typing import Optional, Callable, Union, Any
-from version import __package_name__, __version__, __description__
+
+from version import __description__, __package_name__, __version__
 
 
 def main() -> None:
@@ -150,6 +152,13 @@ class JunoMapping(Pipeline):
             default=0.8,
             help="Minimum allele frequency to filter variants on.",
         )
+        self.add_argument(
+            "--min-reads-per-strand",
+            type=check_number_within_range(minimum=0, maximum=9999),
+            metavar="INT",
+            default=1,
+            help="Minimum number of reads per strand to call a variant.",
+        )
 
     def _parse_args(self) -> argparse.Namespace:
         args = super()._parse_args()
@@ -168,6 +177,7 @@ class JunoMapping(Pipeline):
         self.species: str = args.species
         self.minimum_depth_variant: int = args.minimum_depth_variant
         self.minimum_allele_frequency: float = args.minimum_allele_frequency
+        self.min_reads_per_strand: int = args.min_reads_per_strand
 
         return args
 
@@ -249,6 +259,7 @@ class JunoMapping(Pipeline):
             "species": str(self.species),
             "minimum_depth": int(self.minimum_depth_variant),
             "minimum_allele_frequency": float(self.minimum_allele_frequency),
+            "min_reads_per_strand": int(self.min_reads_per_strand),
         }
 
 
