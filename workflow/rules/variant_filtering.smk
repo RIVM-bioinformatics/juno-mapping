@@ -1,3 +1,31 @@
+rule FilterMutectCalls:
+    input:
+        vcf=OUT + "/variants_raw/raw/{sample}.vcf",
+        stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
+        ref=OUT + "/reference/reference.fasta",
+    output:
+        vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
+    message:
+        "Marking low confidence variants for {wildcards.sample}, based on FilterMutectCalls microbial mode"
+    container:
+        "docker://broadinstitute/gatk:4.3.0.0"
+    conda:
+        "../envs/gatk_picard.yaml"
+    log:
+        OUT + "/log/FilterMutectCalls/{sample}.log",
+    threads: config["threads"]["filter_variants"]
+    resources:
+        mem_gb=config["mem_gb"]["filter_variants"],
+    shell:
+        """
+gatk FilterMutectCalls -V {input.vcf} \
+-R {input.ref} \
+-O {output.vcf} \
+--stats {input.stats} \
+--microbial-mode 2>&1>{log}
+        """
+
+
 rule filter_af:
     input:
         vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
@@ -26,34 +54,6 @@ bcftools filter \
 {input.vcf} \
 1>{output.vcf} \
 2>{log}
-        """
-
-
-rule FilterMutectCalls:
-    input:
-        vcf=OUT + "/variants_raw/raw/{sample}.vcf",
-        stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
-        ref=OUT + "/reference/reference.fasta",
-    output:
-        vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
-    message:
-        "Marking low confidence variants for {wildcards.sample}, based on FilterMutectCalls microbial mode"
-    container:
-        "docker://broadinstitute/gatk:4.3.0.0"
-    conda:
-        "../envs/gatk_picard.yaml"
-    log:
-        OUT + "/log/FilterMutectCalls/{sample}.log",
-    threads: config["threads"]["filter_variants"]
-    resources:
-        mem_gb=config["mem_gb"]["filter_variants"],
-    shell:
-        """
-gatk FilterMutectCalls -V {input.vcf} \
--R {input.ref} \
--O {output.vcf} \
---stats {input.stats} \
---microbial-mode 2>&1>{log}
         """
 
 
