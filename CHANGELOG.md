@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.2.1...v0.3.0) (2024-01-25)
+
+
+### Features
+
+* add filtering of variants based on strand bias ([3be232a](https://github.com/RIVM-bioinformatics/juno-mapping/commit/3be232abd10f27d3052a81c20cf89f9de8188564))
+
+
+### Dependencies
+
+* smk to 7.32.0 ([4a59f6a](https://github.com/RIVM-bioinformatics/juno-mapping/commit/4a59f6a6f276b619d16415d0ea2463cce4a61e35))
+* update master conda env ([7ebcb10](https://github.com/RIVM-bioinformatics/juno-mapping/commit/7ebcb107dd497a1a1b0d1be5aa79411f7a791600))
+
 ## [0.2.1](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.2.0...v0.2.1) (2023-12-19)
 
 
