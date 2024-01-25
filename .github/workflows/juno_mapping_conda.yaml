@@ -25,6 +25,7 @@ jobs:
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
+          generate-run-shell: false # see https://github.com/mamba-org/setup-micromamba/issues/130
           cache-downloads: true
           environment-file: envs/juno_mapping.yaml
       - name: Cache minikraken
