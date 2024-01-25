@@ -8,9 +8,9 @@ dependencies:
   - git=2.40.*
   - mamba=1.3.*
   - pandas=1.5.*
-  - snakemake=7.18.*
+  - snakemake=7.32.*
   - pip=23.*
   - python=3.11.*
   - pyvcf
   - pip:
-    - "--editable=git+https://github.com/RIVM-bioinformatics/juno-library.git@v2.0.0#egg=juno_library"
+    - "--editable=git+https://github.com/RIVM-bioinformatics/juno-library.git@v2.1.2#egg=juno_library"
