@@ -11,6 +11,8 @@ rule FilterMutectCalls:
         "docker://broadinstitute/gatk:4.3.0.0"
     conda:
         "../envs/gatk_picard.yaml"
+    params:
+        min_reads_per_strand=config["min_reads_per_strand"],
     log:
         OUT + "/log/FilterMutectCalls/{sample}.log",
     threads: config["threads"]["filter_variants"]
@@ -22,6 +24,7 @@ gatk FilterMutectCalls -V {input.vcf} \
 -R {input.ref} \
 -O {output.vcf} \
 --stats {input.stats} \
+--min-reads-per-strand {params.min_reads_per_strand} \
 --microbial-mode 2>&1>{log}
         """
 
