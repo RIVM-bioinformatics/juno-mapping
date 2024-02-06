@@ -61,7 +61,7 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
             kraken_db = Path.home().joinpath("kraken-database")
             assert kraken_db.exists(), "Kraken database not found"
         else:
-            kraken_db = Path("/home/runner/kraken-database")
+            kraken_db = Path("/mnt/kraken-database")
 
         pipeline = JunoMapping(
             argv=[
