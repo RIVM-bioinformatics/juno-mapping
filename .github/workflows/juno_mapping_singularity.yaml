@@ -5,7 +5,7 @@ name: Singularity e2e test
 on: [pull_request]
 
 env:
-  KRAKEN_DEFAULT_DB: /home/runner/kraken-database
+  KRAKEN_DEFAULT_DB: /mnt/kraken-database
 
 jobs:
   singularity_end_to_end:
@@ -21,23 +21,21 @@ jobs:
       - name: check space 1
         shell: bash -l {0}
         run: |
+          echo "Checking space: ."
           df -h .
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-      - uses: actions/checkout@v2
+          echo "Checking space: /mnt"
+          df -h /mnt
+      - uses: actions/checkout@v4
       - uses: eWaterCycle/setup-singularity@v7
         with:
-          singularity-version: 3.8.7
+          singularity-version: 3.8.3
       - name: Install Conda environment with Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           generate-run-shell: false # see https://github.com/mamba-org/setup-micromamba/issues/130
           cache-downloads: true
           environment-file: envs/juno_mapping.yaml
+          environment-path: /mnt/juno_mapping
       - name: Cache minikraken
         id: cache-minikraken
         uses: actions/cache@v3
@@ -52,6 +50,7 @@ jobs:
           curl -k https://genome-idx.s3.amazonaws.com/kraken/k2_viral_20220908.tar.gz > k2_viral_20220908.tar.gz
           tar zxvf k2_viral_20220908.tar.gz
           ls -lh
+          rm k2_viral_20220908.tar.gz
       - name: Conda list
         shell: bash -l {0}
         run: conda list
@@ -66,7 +65,10 @@ jobs:
             sudo rm -rf /opt/ghc
             sudo rm -rf "/usr/local/share/boost"
           fi
+          echo "Checking space: ."
           df -h .
+          echo "Checking space: /mnt"
+          df -h /mnt
           which singularity
           singularity --version
       - name: Test juno_mapping pipeline using singularity.
@@ -79,6 +81,7 @@ jobs:
         if: always()
         shell: bash -l {0}
         run: | 
+          echo "Checking space: ."
           df -h .
-
-  
+          echo "Checking space: /mnt"
+          df -h /mnt
