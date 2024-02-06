@@ -85,6 +85,8 @@ jobs:
           df -h .
           echo "Checking space: /mnt"
           df -h /mnt
-          du -sh /mnt/juno_mapping
           du -sh /mnt/kraken-database
-          du -sh ${{ env.GITHUB_WORKSPACE }}
+          echo "Checking space: $GITHUB_WORKSPACE"
+          du -sh $GITHUB_WORKSPACE
+          echo "Checking space: /home/runner"
+          du -sh /home/runner/*
