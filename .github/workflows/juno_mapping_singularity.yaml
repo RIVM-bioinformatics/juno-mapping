@@ -27,8 +27,8 @@ jobs:
           echo "Checking space: /mnt"
           df -h /mnt
           echo "Checking dir sizes"
-          du -sh *
-          du -sh */*
+          du -sh /*
+          du -sh /*/*
       - uses: actions/checkout@v4
       - uses: eWaterCycle/setup-singularity@v7
         with:
@@ -74,8 +74,8 @@ jobs:
           echo "Checking space: /mnt"
           df -h /mnt
           echo "Checking dir sizes"
-          du -sh *
-          du -sh */*
+          du -sh /*
+          du -sh /*/*
           which singularity
           singularity --version
       - name: Test juno_mapping pipeline using singularity.
@@ -93,5 +93,5 @@ jobs:
           echo "Checking space: /mnt"
           df -h /mnt
           echo "Checking dir sizes"
-          du -sh *
-          du -sh */*
+          du -sh /*
+          du -sh /*/*
