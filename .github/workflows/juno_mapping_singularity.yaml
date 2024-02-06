@@ -21,6 +21,7 @@ jobs:
       - name: check space 1
         shell: bash -l {0}
         run: |
+          sudo chmod -R 777 /mnt
           echo "Checking space: ."
           df -h .
           echo "Checking space: /mnt"
