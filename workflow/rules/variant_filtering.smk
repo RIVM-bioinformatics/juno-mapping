@@ -135,7 +135,7 @@ if config["disable_mask"] == "True":
             ref=OUT + "/reference/reference.fasta",
             mask=OUT + "/variants_raw/no_mask.bed",
         output:
-            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth_masked/{sample}.vcf",
+            vcf=OUT + "/variants/{sample}.vcf",
         log:
             OUT + "/log/filter_depth/{sample}.log",
         threads: config["threads"]["filter_variants"]
