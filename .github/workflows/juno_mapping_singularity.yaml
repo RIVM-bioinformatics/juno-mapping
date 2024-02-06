@@ -26,9 +26,6 @@ jobs:
           df -h .
           echo "Checking space: /mnt"
           df -h /mnt
-          echo "Checking dir sizes"
-          du -sh /*
-          du -sh /*/*
       - uses: actions/checkout@v4
       - uses: eWaterCycle/setup-singularity@v7
         with:
@@ -39,7 +36,7 @@ jobs:
           generate-run-shell: false # see https://github.com/mamba-org/setup-micromamba/issues/130
           cache-downloads: true
           environment-file: envs/juno_mapping.yaml
-          environment-path: /mnt/juno_mapping
+          create-args: --prefix /mnt/juno_mapping
       - name: Cache minikraken
         id: cache-minikraken
         uses: actions/cache@v3
@@ -73,9 +70,6 @@ jobs:
           df -h .
           echo "Checking space: /mnt"
           df -h /mnt
-          echo "Checking dir sizes"
-          du -sh /*
-          du -sh /*/*
           which singularity
           singularity --version
       - name: Test juno_mapping pipeline using singularity.
@@ -92,6 +86,6 @@ jobs:
           df -h .
           echo "Checking space: /mnt"
           df -h /mnt
-          echo "Checking dir sizes"
-          du -sh /*
-          du -sh /*/*
+          du -sh /mnt/juno_mapping
+          du -sh /mnt/kraken-database
+          du -sh ${{ env.GITHUB_WORKSPACE }}
