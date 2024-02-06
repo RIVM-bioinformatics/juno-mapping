@@ -36,7 +36,6 @@ jobs:
           generate-run-shell: false # see https://github.com/mamba-org/setup-micromamba/issues/130
           cache-downloads: true
           environment-file: envs/juno_mapping.yaml
-          create-args: --prefix /mnt/juno_mapping
       - name: Cache minikraken
         id: cache-minikraken
         uses: actions/cache@v3
