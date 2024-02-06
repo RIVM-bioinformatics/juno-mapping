@@ -145,12 +145,20 @@ class JunoMapping(Pipeline):
             help="Minimum length for fastq reads to be kept after trimming.",
         )
         self.add_argument(
-            "-maf",
-            "--minimum-allele-frequency",
+            "-smaf",
+            "--soft-filter-minimum-allele-frequency",
             type=check_number_within_range(minimum=0, maximum=1),
             metavar="FLOAT",
             default=0.8,
-            help="Minimum allele frequency to filter variants on.",
+            help="Minimum allele frequency to soft filter variants on. Soft filtering is done by adding a filter tag to the VCF file.",
+        )
+        self.add_argument(
+            "-hmaf",
+            "--hard-filter-minimum-allele-frequency",
+            type=check_number_within_range(minimum=0, maximum=1),
+            metavar="FLOAT",
+            default=0.2,
+            help="Minimum allele frequency to hard filter variants on. Hard filtering is done by removing variants from the VCF file.",
         )
         self.add_argument(
             "--min-reads-per-strand",
@@ -176,7 +184,8 @@ class JunoMapping(Pipeline):
         self.time_limit: int = args.time_limit
         self.species: str = args.species
         self.minimum_depth_variant: int = args.minimum_depth_variant
-        self.minimum_allele_frequency: float = args.minimum_allele_frequency
+        self.hard_filter_minimum_allele_frequency: float = args.hard_filter_minimum_allele_frequency
+        self.soft_filter_minimum_allele_frequency: float = args.soft_filter_minimum_allele_frequency
         self.min_reads_per_strand: int = args.min_reads_per_strand
 
         return args
@@ -258,7 +267,8 @@ class JunoMapping(Pipeline):
             "use_singularity": str(self.snakemake_args["use_singularity"]),
             "species": str(self.species),
             "minimum_depth": int(self.minimum_depth_variant),
-            "minimum_allele_frequency": float(self.minimum_allele_frequency),
+            "soft_filter_minimum_allele_frequency": float(self.soft_filter_minimum_allele_frequency),
+            "hard_filter_minimum_allele_frequency": float(self.hard_filter_minimum_allele_frequency),
             "min_reads_per_strand": int(self.min_reads_per_strand),
         }
 

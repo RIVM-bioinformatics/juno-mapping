@@ -29,13 +29,41 @@ gatk FilterMutectCalls -V {input.vcf} \
         """
 
 
-rule filter_af:
+rule hard_filter_af:
     input:
         vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
-        stats=OUT + "/variants_raw/raw/{sample}.vcf.stats",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/FMC_af/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_afhard/{sample}.vcf",
+    message:
+        "Hard filtering variants with very low allele frequency for {wildcards.sample}"
+    container:
+        "docker://staphb/bcftools:1.16"
+    conda:
+        "../envs/bcftools.yaml"
+    params:
+        min_af=config["hard_filter_minimum_allele_frequency"],
+    log:
+        OUT + "/log/hard_filter_af/{sample}.log",
+    threads: config["threads"]["filter_variants"]
+    resources:
+        mem_gb=config["mem_gb"]["filter_variants"],
+    shell:
+        """
+bcftools filter \
+--exclude \"FORMAT/AF < {params.min_af}\" \
+{input.vcf} \
+1>{output.vcf} \
+2>{log}
+        """
+
+
+rule soft_filter_af:
+    input:
+        vcf=OUT + "/variants_raw/FMC_afhard/{sample}.vcf",
+        ref=OUT + "/reference/reference.fasta",
+    output:
+        vcf=OUT + "/variants_raw/FMC_afhard_afsoft/{sample}.vcf",
     message:
         "Marking minority variants for {wildcards.sample}"
     container:
@@ -43,7 +71,7 @@ rule filter_af:
     conda:
         "../envs/bcftools.yaml"
     params:
-        min_af=config["minimum_allele_frequency"],
+        min_af=config["soft_filter_minimum_allele_frequency"],
     log:
         OUT + "/log/filter_af/{sample}.log",
     threads: config["threads"]["filter_variants"]
@@ -62,10 +90,10 @@ bcftools filter \
 
 rule filter_depth:
     input:
-        vcf=OUT + "/variants_raw/FMC_af/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_afhard_afsoft/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
     container:
         "docker://staphb/bcftools:1.16"
     conda:
@@ -103,11 +131,11 @@ if config["disable_mask"] == "True":
 
     rule filter_mask:
         input:
-            vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
+            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
             ref=OUT + "/reference/reference.fasta",
             mask=OUT + "/variants_raw/no_mask.bed",
         output:
-            vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
+            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth_masked/{sample}.vcf",
         log:
             OUT + "/log/filter_depth/{sample}.log",
         threads: config["threads"]["filter_variants"]
@@ -138,11 +166,11 @@ else:
 
     rule filter_mask:
         input:
-            vcf=OUT + "/variants_raw/FMC_af_depth/{sample}.vcf",
+            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
             ref=OUT + "/reference/reference.fasta",
             mask=OUT + "/variants_raw/mask.bed",
         output:
-            vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
+            vcf=OUT + "/variants/{sample}.vcf",
         container:
             "docker://staphb/bcftools:1.16"
         conda:
@@ -165,10 +193,10 @@ bcftools filter \
 
 rule remove_low_confidence_variants:
     input:
-        vcf=OUT + "/variants_raw/FMC_af_depth_masked/{sample}.vcf",
+        vcf=OUT + "/variants/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants/{sample}.vcf",
+        vcf=OUT + "/variants_clean/{sample}.vcf",
     message:
         "Remove low confidence variants for {wildcards.sample}"
     conda:
@@ -193,7 +221,7 @@ gatk SelectVariants \
 rule select_snps:
     input:
         ref=OUT + "/reference/reference.fasta",
-        vcf=OUT + "/variants/{sample}.vcf",
+        vcf=OUT + "/variants_clean/{sample}.vcf",
     output:
         vcf=OUT + "/variants_snps_only/{sample}.snps.vcf",
     container:
