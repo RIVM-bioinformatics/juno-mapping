@@ -43,7 +43,7 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
         46679: {"REF": "C", "ALT": "G"},
     }
 
-    output_dir = Path("pipeline_test_output_singularity")
+    output_dir = Path("/mnt/pipeline_test_output_singularity")
     input_dir = "tests"
 
     @classmethod
@@ -61,7 +61,7 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
             kraken_db = Path.home().joinpath("kraken-database")
             assert kraken_db.exists(), "Kraken database not found"
         else:
-            kraken_db = Path("/home/runner/kraken-database")
+            kraken_db = Path("/mnt/kraken-database")
 
         pipeline = JunoMapping(
             argv=[
@@ -81,7 +81,7 @@ class TestJunoMappingPipelineSingularity(unittest.TestCase):
                 "--db-dir",
                 str(kraken_db),
                 "--prefix",
-                "/home/runner/sing_containers",
+                "/mnt/sing_containers",
             ]
         )
         pipeline.run()
