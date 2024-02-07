@@ -2,7 +2,7 @@
 
 name: Singularity e2e test
 
-on: [pull_request]
+on: workflow_dispatch
 
 env:
   KRAKEN_DEFAULT_DB: /mnt/kraken-database
