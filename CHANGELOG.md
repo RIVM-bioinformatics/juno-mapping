@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.3.0...v0.3.1) (2024-02-07)
+
+
+### Bug Fixes
+
+* distinguish soft and hard AF filter ([ee23734](https://github.com/RIVM-bioinformatics/juno-mapping/commit/ee2373473fec6a4d510d1fa323aec21a560e3acd))
+* fix paths when not masking regions ([8e8a850](https://github.com/RIVM-bioinformatics/juno-mapping/commit/8e8a8500635db7608a6f9d585cb3ba3d13db3e99))
+
 ## [0.3.0](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.2.1...v0.3.0) (2024-01-25)
 
 
