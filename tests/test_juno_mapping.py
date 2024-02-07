@@ -122,7 +122,7 @@ class TestJunoMappingDryRun(unittest.TestCase):
         expected_user_param_values = {
             "species": "mycobacterium_tuberculosis",
             "reference": "reference.fasta",
-            "minimum_allele_frequency": 0.8,
+            "soft_filter_minimum_allele_frequency": 0.8,
             "minimum_depth": 10,
             "disable_mask": "False",
             "mask_bed": "files/RLC_Farhat.bed",
