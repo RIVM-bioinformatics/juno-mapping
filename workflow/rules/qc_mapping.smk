@@ -116,6 +116,9 @@ rule CollectAlignmentSummaryMetrics:
         "docker://broadinstitute/picard:2.27.5"
     params:
         use_singularity=config["use_singularity"],
+    threads: config["threads"]["picard"]
+    resources:
+        mem_gb=config["mem_gb"]["picard"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -143,6 +146,9 @@ rule CollectGcBiasMetrics:
         "docker://broadinstitute/picard:2.27.5"
     params:
         use_singularity=config["use_singularity"],
+    threads: config["threads"]["picard"]
+    resources:
+        mem_gb=config["mem_gb"]["picard"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -167,6 +173,9 @@ rule CollectQualityYieldMetrics:
         "docker://broadinstitute/picard:2.27.5"
     params:
         use_singularity=config["use_singularity"],
+    threads: config["threads"]["picard"]
+    resources:
+        mem_gb=config["mem_gb"]["picard"],
     shell:
         """
 if [ {params.use_singularity} == True ]
@@ -192,6 +201,9 @@ rule CollectWgsMetrics:
         "docker://broadinstitute/picard:2.27.5"
     params:
         use_singularity=config["use_singularity"],
+    threads: config["threads"]["picard"]
+    resources:
+        mem_gb=config["mem_gb"]["picard"],
     shell:
         """
 if [ {params.use_singularity} == True ]
