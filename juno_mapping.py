@@ -218,7 +218,7 @@ class JunoMapping(Pipeline):
         # replace by dictionary if expansion is needed, could also support acronyms (mtb, tb)
         if self.species == "mycobacterium_tuberculosis":
             self.reference = Path(
-                "/mnt/db/juno/mapping/mycobacterium_tuberculosis/AL123456.3.fasta"
+                "/mnt/db/juno/mapping/mycobacterium_tuberculosis/NC_000962.3.fasta"
             )
             self.mask = Path("files/RLC_Farhat.bed")
         else:
