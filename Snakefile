@@ -17,7 +17,7 @@ OUT = config["output_dir"]
 localrules:
     all,
     copy_ref,
-    copy_mask
+    copy_mask,
 
 
 include: "workflow/rules/fastqc_raw_data.smk"
