@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.3.1...v0.3.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* default mtb ref path ([a899e93](https://github.com/RIVM-bioinformatics/juno-mapping/commit/a899e93d5fcc7fdc61f891b6c5595d9872d866bc))
+* set hpc resource config ([a2e64a3](https://github.com/RIVM-bioinformatics/juno-mapping/commit/a2e64a341dc3de220ee884e75e494d5b9a699678))
+
 ## [0.3.1](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.3.0...v0.3.1) (2024-02-07)
 
 
