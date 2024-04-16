@@ -36,5 +36,6 @@ rule all:
     input:
         vcf=expand(OUT + "/variants/{sample}.vcf", sample=SAMPLES),
         vcf_snps=expand(OUT + "/variants_snps_only/{sample}.snps.vcf", sample=SAMPLES),
+        large_deletions=expand(OUT + "/deletions/{sample}.vcf", sample=SAMPLES),
         multiqc=OUT + "/multiqc/multiqc.html",
         filter_report=OUT + "/qc_variant_calling/report_filter_status_mqc.tsv",

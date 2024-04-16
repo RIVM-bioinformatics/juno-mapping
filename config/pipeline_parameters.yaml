@@ -9,6 +9,7 @@ threads:
     samtools: 4
     multiqc: 1
     bbtools: 1
+    delly: 1
     other: 1
 
 mem_gb:
@@ -22,4 +23,5 @@ mem_gb:
     samtools: 8
     multiqc: 8
     bbtools: 6
+    delly: 16
     other: 8
