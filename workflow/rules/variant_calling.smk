@@ -15,9 +15,8 @@ rule Mutect2:
         "docker://broadinstitute/gatk:4.3.0.0"
     conda:
         "../envs/gatk_picard.yaml"
-    threads: 4
     log:
-        OUT + "/log/variant_calling/{sample}.log",
+        OUT + "/log/variant_calling_mutect2/{sample}.log",
     threads: config["threads"]["gatk"]
     resources:
         mem_gb=config["mem_gb"]["gatk"],
@@ -30,4 +29,31 @@ gatk Mutect2 \
 {params.annotations} \
 --num-matching-bases-in-dangling-end-to-recover {params.dangling_bases} \
 --max-reads-per-alignment-start 75 2>&1>{log}
+        """
+
+
+rule delly_call:
+    input:
+        bam=OUT + "/mapped_reads/duprem/{sample}.bam",
+        bai=OUT + "/mapped_reads/duprem/{sample}.bam.bai",
+        ref=OUT + "/reference/reference.fasta",
+    output:
+        bcf=OUT + "/variants_raw/delly_raw/{sample}.bcf",
+    container:
+        "docker://quay.io/biocontainers/delly:1.2.6--hb7e2ac5_0"
+    conda:
+        "../envs/delly.yaml"
+    log:
+        OUT + "/log/variant_calling_delly/{sample}.log",
+    threads: config["threads"]["delly"]
+    resources:
+        mem_gb=config["mem_gb"]["delly"],
+    shell:
+        """
+delly call \
+-t DEL \
+-g {input.ref} \
+{input.bam} \
+-o {output.bcf} \
+2>&1>{log}
         """

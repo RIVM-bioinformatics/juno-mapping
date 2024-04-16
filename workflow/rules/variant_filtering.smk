@@ -242,3 +242,42 @@ gatk SelectVariants \
 --exclude-filtered \
 -O {output.vcf} 2>&1>{log}
         """
+
+
+if config["deletion_regions_bed"] != "None":
+
+    # borrowed from pathogen-profiler:
+    # https://github.com/jodyphelan/pathogen-profiler/blob/v4.0.0/pathogenprofiler/bam.py#L64
+    rule filter_large_deletions:
+        input:
+            OUT + "/variants_raw/delly_raw/{sample}.bcf",
+        output:
+            filtered=OUT + "/deletions/{sample}.vcf",
+        container:
+            "docker://staphb/bcftools:1.16"
+        conda:
+            "../envs/bcftools.yaml"
+        params:
+            deletion_regions_bed=config["deletion_regions_bed"],
+        log:
+            OUT + "/log/filter_large_deletions/{sample}.log",
+        threads: config["threads"]["filter_variants"]
+        resources:
+            mem_gb=config["mem_gb"]["filter_variants"],
+        shell:
+            """
+bcftools view -c 2 {input} -Oz 2>{log} |\
+bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} 2>&1>>{log}
+            """
+
+else:
+
+    rule mock_large_deletions:
+        output:
+            touch(OUT + "/deletions/{sample}.vcf"),
+        log:
+            OUT + "/log/mock_large_deletions.log",
+        shell:
+            """
+echo "Large deletions filtering disabled, making empty files {output}" > {log}
+            """
