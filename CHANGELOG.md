@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.3.2...v0.4.0) (2024-04-16)
+
+
+### Features
+
+* call large deletions using delly ([bd06022](https://github.com/RIVM-bioinformatics/juno-mapping/commit/bd060229e5b13d05a3a11556d048315449dccae1))
+
+
+### Bug Fixes
+
+* rm unneeded check ([6c30463](https://github.com/RIVM-bioinformatics/juno-mapping/commit/6c30463ca9607f804f1cde9a087f00719ea8072b))
+
 ## [0.3.2](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.3.1...v0.3.2) (2024-03-27)
 
 
