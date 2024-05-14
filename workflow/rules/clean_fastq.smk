@@ -2,8 +2,8 @@ rule clean_fastq:
     input:
         lambda wildcards: (SAMPLES[wildcards.sample][i] for i in ["R1", "R2"]),
     output:
-        r1=OUT + "/clean_unsorted_fastq/{sample}_pR1.fastq.gz",
-        r2=OUT + "/clean_unsorted_fastq/{sample}_pR2.fastq.gz",
+        r1=temp(OUT + "/clean_unsorted_fastq/{sample}_pR1.fastq.gz"),
+        r2=temp(OUT + "/clean_unsorted_fastq/{sample}_pR2.fastq.gz"),
         unpaired=OUT + "/clean_fastq/{sample}_unpaired_joined.fastq.gz",
         html=OUT + "/clean_fastq/{sample}_fastp.html",
         json=OUT + "/clean_fastq/{sample}_fastp.json",
