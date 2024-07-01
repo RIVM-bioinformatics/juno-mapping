@@ -21,7 +21,7 @@ mem_gb:
     filter_variants: 8
     kraken2: 64
     samtools: 8
-    multiqc: 8
+    multiqc: 32
     bbtools: 64
     delly: 16
     other: 8

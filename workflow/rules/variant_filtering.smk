@@ -29,12 +29,40 @@ gatk FilterMutectCalls -V {input.vcf} \
         """
 
 
-rule hard_filter_af:
+rule split_multiallelic:
     input:
         vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/FMC_afhard/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_biallelic/{sample}.vcf",
+    message:
+        "Splitting multiallelic records into biallelic"
+    container:
+        "docker://staphb/bcftools:1.16"
+    conda:
+        "../envs/bcftools.yaml"
+    log:
+        OUT + "/log/split_multiallelic/{sample}.log",
+    threads: config["threads"]["filter_variants"]
+    resources:
+        mem_gb=config["mem_gb"]["filter_variants"],
+    shell:
+        """
+bcftools norm \
+--multiallelics - \
+--fasta-ref {input.ref} \
+{input.vcf} \
+1>{output.vcf} \
+2>{log}
+        """
+
+
+rule hard_filter_af:
+    input:
+        vcf=OUT + "/variants_raw/FMC_biallelic/{sample}.vcf",
+        ref=OUT + "/reference/reference.fasta",
+    output:
+        vcf=OUT + "/variants_raw/FMC_biallelic_afhard/{sample}.vcf",
     message:
         "Hard filtering variants with very low allele frequency for {wildcards.sample}"
     container:
@@ -60,10 +88,10 @@ bcftools filter \
 
 rule soft_filter_af:
     input:
-        vcf=OUT + "/variants_raw/FMC_afhard/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_biallelic_afhard/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/FMC_afhard_afsoft/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_biallelic_afhard_afsoft/{sample}.vcf",
     message:
         "Marking minority variants for {wildcards.sample}"
     container:
@@ -90,10 +118,10 @@ bcftools filter \
 
 rule filter_depth:
     input:
-        vcf=OUT + "/variants_raw/FMC_afhard_afsoft/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_biallelic_afhard_afsoft/{sample}.vcf",
         ref=OUT + "/reference/reference.fasta",
     output:
-        vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
+        vcf=OUT + "/variants_raw/FMC_biallelic_afhard_afsoft_depth/{sample}.vcf",
     container:
         "docker://staphb/bcftools:1.16"
     conda:
@@ -131,7 +159,7 @@ if config["disable_mask"] == "True":
 
     rule filter_mask:
         input:
-            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
+            vcf=OUT + "/variants_raw/FMC_biallelic_afhard_afsoft_depth/{sample}.vcf",
             ref=OUT + "/reference/reference.fasta",
             mask=OUT + "/variants_raw/no_mask.bed",
         output:
@@ -163,7 +191,7 @@ else:
 
     rule filter_mask:
         input:
-            vcf=OUT + "/variants_raw/FMC_afhard_afsoft_depth/{sample}.vcf",
+            vcf=OUT + "/variants_raw/FMC_biallelic_afhard_afsoft_depth/{sample}.vcf",
             ref=OUT + "/reference/reference.fasta",
             mask=OUT + "/variants_raw/mask.bed",
         output:
