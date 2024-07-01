@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.1...v0.4.2) (2024-07-01)
+
+
+### Bug Fixes
+
+* increase mqc mem ([6a0ce31](https://github.com/RIVM-bioinformatics/juno-mapping/commit/6a0ce31bf095daec364ec9de2a5171cf8ecbb569))
+* split variants into biallelics ([be3c319](https://github.com/RIVM-bioinformatics/juno-mapping/commit/be3c3191b8bc1940cdc68b14afcaf1d9c40ce812))
+
 ## [0.4.1](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.0...v0.4.1) (2024-05-14)
 
 
