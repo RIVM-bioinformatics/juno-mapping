@@ -28,6 +28,7 @@ gatk FilterMutectCalls -V {input.vcf} \
 --microbial-mode 2>&1>{log}
         """
 
+
 rule split_multiallelic:
     input:
         vcf=OUT + "/variants_raw/FMC/{sample}.vcf",
@@ -54,6 +55,7 @@ bcftools norm \
 1>{output.vcf} \
 2>{log}
         """
+
 
 rule hard_filter_af:
     input:
