@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.3](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.2...v0.4.3) (2024-07-25)
+
+
+### Bug Fixes
+
+* update cli ([5304d85](https://github.com/RIVM-bioinformatics/juno-mapping/commit/5304d85313523a883966e93344854a2ee45398f2))
+
+
+### Dependencies
+
+* update juno library ([710bf39](https://github.com/RIVM-bioinformatics/juno-mapping/commit/710bf39d9817157cafddba5a5e32ce83cc294335))
+
 ## [0.4.2](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.1...v0.4.2) (2024-07-01)
 
 
