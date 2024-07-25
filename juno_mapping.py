@@ -8,11 +8,9 @@ Date: 25-05-2023
 """
 
 import argparse
-import pathlib
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, Tuple, Union
 
 import yaml
 from juno_library import Pipeline
@@ -62,7 +60,7 @@ def check_number_within_range(
 class JunoMapping(Pipeline):
     pipeline_name: str = __package_name__
     pipeline_version: str = __version__
-    input_type: str = "fastq"
+    input_type: Tuple[str, ...] = ("fastq",)
     species_options = ["mycobacterium_tuberculosis"]
 
     def _add_args_to_parser(self) -> None:
