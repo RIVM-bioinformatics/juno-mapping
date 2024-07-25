@@ -8,11 +8,9 @@ Date: 25-05-2023
 """
 
 import argparse
-import pathlib
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional, Tuple, Union
 
 import yaml
 from juno_library import Pipeline
@@ -62,7 +60,7 @@ def check_number_within_range(
 class JunoMapping(Pipeline):
     pipeline_name: str = __package_name__
     pipeline_version: str = __version__
-    input_type: str = "fastq"
+    input_type: Tuple[str, ...] = ("fastq",)
     species_options = ["mycobacterium_tuberculosis"]
 
     def _add_args_to_parser(self) -> None:
@@ -95,7 +93,7 @@ class JunoMapping(Pipeline):
             type=Path,
             metavar="FILE",
             dest="custom_mask",
-            help="Mask file to use, defaults per species can be found in: /mnt/db/juno/mapping/[species]",
+            help="Mask file to use. Default is chosen based on species argument.",
             required=False,
         )
         self.add_argument(
@@ -117,7 +115,7 @@ class JunoMapping(Pipeline):
             "--mean-quality-threshold",
             type=check_number_within_range(minimum=1, maximum=36),
             metavar="INT",
-            default=28,
+            default=22,
             help="Phred score to be used as threshold for cleaning (filtering) fastq files.",
         )
         self.add_argument(
@@ -142,7 +140,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=9999),
             metavar="INT",
             default=10,
-            help="Minimum length for fastq reads to be kept after trimming.",
+            help="Minimum depth of a variant to be kept after filtering.",
         )
         self.add_argument(
             "-smaf",
