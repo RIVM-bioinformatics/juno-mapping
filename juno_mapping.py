@@ -95,7 +95,7 @@ class JunoMapping(Pipeline):
             type=Path,
             metavar="FILE",
             dest="custom_mask",
-            help="Mask file to use, defaults per species can be found in: /mnt/db/juno/mapping/[species]",
+            help="Mask file to use. Default is chosen based on species argument.",
             required=False,
         )
         self.add_argument(
@@ -117,7 +117,7 @@ class JunoMapping(Pipeline):
             "--mean-quality-threshold",
             type=check_number_within_range(minimum=1, maximum=36),
             metavar="INT",
-            default=28,
+            default=22,
             help="Phred score to be used as threshold for cleaning (filtering) fastq files.",
         )
         self.add_argument(
@@ -142,7 +142,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=9999),
             metavar="INT",
             default=10,
-            help="Minimum length for fastq reads to be kept after trimming.",
+            help="Minimum depth of a variant to be kept after filtering.",
         )
         self.add_argument(
             "-smaf",
