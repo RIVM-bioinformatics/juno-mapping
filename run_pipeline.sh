@@ -92,6 +92,7 @@ fi
 export SINGULARITY_TMPDIR="$(pwd)"
 
 #without exclusion file
+# set time limit to 600 minutes in case large files are present. GATK is slow.
 if [ "${EXCLUSION_FILE}" == "" ]
 then
     python juno_mapping.py \
@@ -99,7 +100,8 @@ then
         -i "${input_dir}" \
         -o "${output_dir}" \
         -s "${SPECIES}" \
-        --prefix "/mnt/db/juno/sing_containers"
+        --prefix "/mnt/db/juno/sing_containers" \
+        -tl 600
 
         result=$?
 else
@@ -109,7 +111,8 @@ else
         -o "${output_dir}" \
         -s "${SPECIES}" \
         --prefix "/mnt/db/juno/sing_containers" \
-        -ex "${EXCLUSION_FILE}"
+        -ex "${EXCLUSION_FILE}" \
+        -tl 600
 
         result=$?
 fi
