@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.3...v0.4.4) (2024-09-12)
+
+
+### Bug Fixes
+
+* prevent unbound var error on irods acc ([9c89b0f](https://github.com/RIVM-bioinformatics/juno-mapping/commit/9c89b0fbf9e6dd3a6c5174f511ace6413bd5c584))
+
 ## [0.4.3](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.2...v0.4.3) (2024-07-25)
 
 
