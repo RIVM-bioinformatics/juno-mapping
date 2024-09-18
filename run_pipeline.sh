@@ -121,6 +121,10 @@ fi
 
 set +euo pipefail
 
+echo "--start env--"
+env
+echo "--end--"
+
 SEQ_KEYS=
 SEQ_ENV=`env | grep irods_input_sequencing`
 for SEQ_AVU in ${SEQ_ENV}
