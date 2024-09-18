@@ -122,7 +122,7 @@ fi
 set +euo pipefail
 
 SEQ_KEYS=
-SEQ_ENV=`env | grep -E irods_input_(sequencing|user)`
+SEQ_ENV=`env | grep -E 'irods_input_(sequencing|user)'`
 for SEQ_AVU in ${SEQ_ENV}
 do
     SEQ_KEYS="${SEQ_KEYS} ${SEQ_AVU%%=*}"
