@@ -121,10 +121,6 @@ fi
 
 set +euo pipefail
 
-echo "--start env--"
-env
-echo "--end--"
-
 SEQ_KEYS=
 SEQ_ENV=`env | grep irods_input_sequencing`
 for SEQ_AVU in ${SEQ_ENV}
@@ -134,7 +130,7 @@ done
 
 for key in $SEQ_KEYS irods_input_illumina__Flowcell irods_input_illumina__Instrument \
     irods_input_illumina__Date irods_input_illumina__Run_number irods_input_illumina__Run_Id \
-    irods_input__user__include_in_surveillance irods_input__user__validation_set
+    irods_input_user__include_in_surveillance irods_input_user__validation_set
 do
     if [ ! -z ${!key} ] ; then
         attrname=${key:12}
