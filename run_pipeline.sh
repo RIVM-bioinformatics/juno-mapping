@@ -122,7 +122,7 @@ fi
 set +euo pipefail
 
 SEQ_KEYS=
-SEQ_ENV=`env | grep irods_input_sequencing`
+SEQ_ENV=`env | grep -E 'irods_input_(sequencing|user)'`
 for SEQ_AVU in ${SEQ_ENV}
 do
     SEQ_KEYS="${SEQ_KEYS} ${SEQ_AVU%%=*}"
@@ -134,7 +134,7 @@ do
     if [ ! -z ${!key} ] ; then
         attrname=${key:12}
         attrname=${attrname/__/::}
-        echo "${attrname}: '${!key}'" >> ${OUTPUTDIR}/metadata.yml
+        echo "${attrname}: '${!key}'" >> ${output_dir}/metadata.yml
     fi
 done
 
