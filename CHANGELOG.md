@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.5](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.4...v0.4.5) (2024-09-19)
+
+
+### Bug Fixes
+
+* correct metadata var ([0cc6f3d](https://github.com/RIVM-bioinformatics/juno-mapping/commit/0cc6f3d11bcbc9692df4e51dac26c41bd4e439c6))
+* propagate user uploaded metadata ([0fe1218](https://github.com/RIVM-bioinformatics/juno-mapping/commit/0fe12185606e3b81ee1a6da7601b4d4c1fc945c8))
+* quote pattern ([876945f](https://github.com/RIVM-bioinformatics/juno-mapping/commit/876945fbffd55b32d847f4e7db6ab3377ad46dc0))
+
 ## [0.4.4](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.3...v0.4.4) (2024-09-12)
 
 
