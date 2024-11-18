@@ -63,6 +63,10 @@ export -f __conda_hashr
 mamba env create -f envs/juno_mapping.yaml --name pipeline_env
 conda activate pipeline_env
 
+# Make the script checking LSF status available without .py extension
+# with .py extension, the argument is not recognized when passing this to juno-mapping
+cp /mnt/miniconda/bin/check_lsf_status.py $CONDA_PREFIX/bin/check_lsf_status
+
 #----------------------------------------------#
 # Run the pipeline
 
@@ -91,7 +95,7 @@ fi
 # Containers will use it for storing tmp files when building a container
 export SINGULARITY_TMPDIR="$(pwd)"
 
-#without exclusion file
+# without exclusion file
 # set time limit to 600 minutes in case large files are present. GATK is slow.
 if [ "${EXCLUSION_FILE}" == "" ]
 then
@@ -100,8 +104,9 @@ then
         -i "${input_dir}" \
         -o "${output_dir}" \
         -s "${SPECIES}" \
+        --snakemake-args "cluster_status=check_lsf_status" \
         --prefix "/mnt/db/juno/sing_containers" \
-        -tl 600
+        -tl 1200
 
         result=$?
 else
@@ -112,7 +117,8 @@ else
         -s "${SPECIES}" \
         --prefix "/mnt/db/juno/sing_containers" \
         -ex "${EXCLUSION_FILE}" \
-        -tl 600
+        --snakemake-args "cluster_status=check_lsf_status" \
+        -tl 1200
 
         result=$?
 fi
