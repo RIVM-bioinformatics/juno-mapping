@@ -22,6 +22,6 @@ mem_gb:
     kraken2: 64
     samtools: 8
     multiqc: 32
-    bbtools: 64
+    bbtools: 128
     delly: 16
     other: 8
