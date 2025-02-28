@@ -1,3 +1,6 @@
+# Import the rules from variant_calling.smk
+include: "variant_calling.smk"
+
 rule FilterMutectCalls:
     input:
         vcf=OUT + "/variants_raw/raw/{sample}.vcf",
@@ -274,6 +277,7 @@ gatk SelectVariants \
 rule filter_large_deletions:
     input:
         OUT + "/variants_raw/delly_raw/{sample}.bcf",
+        flag=lambda wildcards: checkpoints.check_mean_coverage.get(sample=wildcards.sample).output.flag,
     output:
         filtered=OUT + "/deletions/{sample}.vcf",
     container:
@@ -287,6 +291,31 @@ rule filter_large_deletions:
         mem_gb=config["mem_gb"]["filter_variants"],
     shell:
         """
-bcftools view -c 2 {input} -Oz 2>{log} |\
-bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} 2>&1>>{log}
+if [ $(cat {input.flag}) = "low" ]; then
+    echo "large deletions not filtered for the sample" > {log}
+    touch {output.filtered}
+else
+    bcftools view -c 2 {input} -Oz 2>{log} |\
+    bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} 2>&1>>{log}
+fi
         """
+
+# rule filter_large_deletions:
+#     input:
+#         OUT + "/variants_raw/delly_raw/{sample}.bcf",
+#     output:
+#         filtered=OUT + "/deletions/{sample}.vcf",
+#     container:
+#         "docker://staphb/bcftools:1.16"
+#     conda:
+#         "../envs/bcftools.yaml"
+#     log:
+#         OUT + "/log/filter_large_deletions/{sample}.log",
+#     threads: config["threads"]["filter_variants"]
+#     resources:
+#         mem_gb=config["mem_gb"]["filter_variants"],
+#     shell:
+#         """
+# bcftools view -c 2 {input} -Oz 2>{log} |\
+# bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} 2>&1>>{log}
+#         """
