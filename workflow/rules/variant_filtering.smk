@@ -290,14 +290,16 @@ rule filter_large_deletions:
     resources:
         mem_gb=config["mem_gb"]["filter_variants"],
     shell:
-        """
-if [ $(cat {input.flag}) = "low" ]; then
-    echo "large deletions not filtered for the sample" > {log}
-    touch {output.filtered}
-else
-    bcftools view -c 2 {input} -Oz 2>{log} |\
-    bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} 2>&1>>{log}
-fi
+       """
+        if [ $(cat {input.flag}) = "low" ]; then
+            echo "##fileformat=VCFv4.2" > {output.filtered}
+            echo "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO" >> {output.filtered}
+        else
+            bcftools view -c 2 {input[0]} -Oz -o {output.filtered}.gz 2>{log}
+            bcftools index {output.filtered}.gz
+            bcftools view -e '(INFO/END-POS)>=100000' -Ov -o {output.filtered} {output.filtered}.gz 2>&1>>{log}
+            rm {output.filtered}.gz {output.filtered}.gz.csi
+        fi
         """
 
 # rule filter_large_deletions:
