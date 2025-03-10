@@ -25,4 +25,4 @@ mem_gb:
     bbtools: 64
     delly: 16
     other: 8
-    calculate_coverage: 32
+    calculate_coverage: 8
