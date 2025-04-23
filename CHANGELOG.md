@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.6](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.5...v0.4.6) (2025-04-23)
+
+
+### Bug Fixes
+
+* added checkpoint for coverage check for delly and filtering deletions ([1bc57d6](https://github.com/RIVM-bioinformatics/juno-mapping/commit/1bc57d61d29e32cb1f6530e0a6230e825e9a7c06))
+* decreased mem_gb for calculate coverage ([8fbddfa](https://github.com/RIVM-bioinformatics/juno-mapping/commit/8fbddfaf2f76968b26af561e222df558f751fd15))
+* reindex bcf file from delly in filter_large_deletions step to prevent empty output ([a4b8a87](https://github.com/RIVM-bioinformatics/juno-mapping/commit/a4b8a87facd2ba057b27cba8eb7d49ff517b4b0c))
+
 ## [0.4.5](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.4...v0.4.5) (2024-09-19)
 
 
