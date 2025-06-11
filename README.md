@@ -29,8 +29,8 @@ The pipeline uses the following tools:
 6. [bcftools](https://samtools.github.io/bcftools/bcftools.html) for VCF filtering.
 7. [samtools](https://github.com/samtools/samtools) for processing of SAM and BAM files.
 8. [Bbtools](https://jgi.doe.gov/data-and-tools/bbtools/) (Bushnell, 2014) is used to generate scaffold alignment metrics 
-9. [MultiQC](https://multiqc.info/) is used to summarize analysis results and quality assessments in a single report for dynamic visualization.
-10. [Kraken2](https://ccb.jhu.edu/software/kraken2/) and [Bracken](http://ccb.jhu.edu/software/bracken/) for identification of bacterial species.  
+9. [MultiQC](https://multiqc.info/) (Ewels et al., 2016) is used to summarize analysis results and quality assessments in a single report for dynamic visualization.
+10. [Kraken2](https://ccb.jhu.edu/software/kraken2/) (Wood, Lu and Langmead, 2019) and [Bracken](http://ccb.jhu.edu/software/bracken/) (Lu, Breitwieser, Thielen and Salzberg, 2016) for identification of bacterial species.  
 
 ![Image of pipeline](https://github.com/RIVM-bioinformatics/juno-assembly/blob/master/files/juno_mapping.svg)
 
