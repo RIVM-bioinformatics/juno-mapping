@@ -116,7 +116,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=1, maximum=36),
             metavar="INT",
             default=22,
-            help="Phred score to be used as threshold for cleaning (filtering) fastq files.",
+            help="Phred score to be used as threshold for cleaning (filtering) fastq files. Default value is 22.",
         )
         self.add_argument(
             "-ws",
@@ -124,7 +124,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=1, maximum=1000),
             metavar="INT",
             default=5,
-            help="Window size to use for cleaning (filtering) fastq files.",
+            help="Window size to use for cleaning (filtering) fastq files. Default value is 5.",
         )
         self.add_argument(
             "-ml",
@@ -132,7 +132,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=500),
             metavar="INT",
             default=50,
-            help="Minimum length for fastq reads to be kept after trimming.",
+            help="Minimum length for fastq reads to be kept after trimming. Default value is 50.",
         )
         self.add_argument(
             "-md",
@@ -140,7 +140,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=9999),
             metavar="INT",
             default=10,
-            help="Minimum depth of a variant to be kept after filtering.",
+            help="Minimum depth of a variant to be kept after filtering. Default value is 10.",
         )
         self.add_argument(
             "-smaf",
@@ -148,7 +148,7 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=1),
             metavar="FLOAT",
             default=0.8,
-            help="Minimum allele frequency to soft filter variants on. Soft filtering is done by adding a filter tag to the VCF file.",
+            help="Minimum allele frequency to soft filter variants on. Soft filtering is done by adding a filter tag to the VCF file. Default value is 0.8.",
         )
         self.add_argument(
             "-hmaf",
@@ -156,14 +156,14 @@ class JunoMapping(Pipeline):
             type=check_number_within_range(minimum=0, maximum=1),
             metavar="FLOAT",
             default=0.2,
-            help="Minimum allele frequency to hard filter variants on. Hard filtering is done by removing variants from the VCF file.",
+            help="Minimum allele frequency to hard filter variants on. Hard filtering is done by removing variants from the VCF file. Default value is 0.2.",
         )
         self.add_argument(
             "--min-reads-per-strand",
             type=check_number_within_range(minimum=0, maximum=9999),
             metavar="INT",
             default=1,
-            help="Minimum number of reads per strand to call a variant.",
+            help="Minimum number of reads per strand to call a variant. Default value is 1.",
         )
 
     def _parse_args(self) -> argparse.Namespace:
