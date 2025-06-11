@@ -51,7 +51,7 @@ git clone https://github.com/RIVM-bioinformatics/juno-mapping.git
 ```
 Alternatively, you can download it manually as a zip file (you will need to unzip it then). If you decide to download the zip only, the pipeline version will not be stored in the audit trail.
 
-2. Enter the directory with the pipeline and install the pipeline. The script will check whether mamba is available and use that if available:
+2. Enter the directory with the pipeline and install the pipeline. The script will check whether mamba is available and installs it from mamba.yaml if unavailable:
 
 ```bash
 cd juno-mapping
