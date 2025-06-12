@@ -11,6 +11,7 @@ dependencies:
   - snakemake=7.32.0
   - pip=23.*
   - python=3.11.*
+  - setuptools=79.*
   - pyvcf
   - pip:
     - "--editable=git+https://github.com/RIVM-bioinformatics/juno-library.git@v2.2.2#egg=juno_library"
