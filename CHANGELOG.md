@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.7](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.6...v0.4.7) (2025-06-12)
+
+
+### Bug Fixes
+
+* add setuptools v79 dependency ([51aef51](https://github.com/RIVM-bioinformatics/juno-mapping/commit/51aef51a4e09f477bc9fba834850c83585f020c9))
+
 ## [0.4.6](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.5...v0.4.6) (2025-04-23)
 
 
