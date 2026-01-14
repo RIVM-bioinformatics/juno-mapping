@@ -21,7 +21,8 @@ rule pileup_contig_metrics:
 pileup.sh in={input.bam} \
 out={output.perScaffold} \
 secondary=f \
-samstreamer=t 2> {output.summary} 
+samstreamer=t 2> {output.summary} \
+-Xmx100g
 
 cp {output.summary} {log}
         """
