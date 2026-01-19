@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.8](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.7...v0.4.8) (2026-01-19)
+
+
+### Bug Fixes
+
+* add memory flag and extra memory for bbtools ([c5bdfc7](https://github.com/RIVM-bioinformatics/juno-mapping/commit/c5bdfc79f46ff7ce4f6754bae89c6f4f6dc91726))
+
 ## [0.4.7](https://github.com/RIVM-bioinformatics/juno-mapping/compare/v0.4.6...v0.4.7) (2025-06-12)
 
 
